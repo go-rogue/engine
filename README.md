@@ -52,5 +52,6 @@ The GUI system will be based upon that available in [afolmert/libtcod-go](https:
   * [ ] Toolbar Separator Widget
   * [ ] Label Widget
   * [ ] TextBox Widget
-  * [ ] Slider Widget  
+  * [ ] Slider Widget
+* [ ] Colour Themes
 * [ ] Working Example for all above
