@@ -29,6 +29,8 @@ With the Raylib driver comes the concept of Spritesheets and Tilesets. This is b
 
 * [ ] Map Base
 * [ ] Map Camera
+* [ ] Map FOV
+ * [ ] Default FOV implementation (and interface)
 * [ ] Map Generation Interface
   * [ ] Roguelike Room Generator (example)
 * [ ] Map Camera
