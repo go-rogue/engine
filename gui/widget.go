@@ -164,8 +164,61 @@ func (w *Widget) GetCurrentColors() (fore, back rl.Color) {
 	return fore, back
 }
 
+//
+// This gets called by the Gui and updates each widgets mouse meta
+// w is the base Widget struct while iW is any of the inheriting
+// widgets e.g Button.
+//
 func (w *Widget) Update(iW IWidget) {
-	/// ...
+
+	// If the console in use does not support the mouse then no point in updating
+	// from it.
+	if !w.gui.mouse.Supported {
+		return
+	}
+
+	// Update Mouse In/Out/Focus if the cursor is visible
+	if w.gui.mouse.Visible {
+		iWPos := iW.GetPosition()
+		if w.gui.mouse.Pos.X >= iWPos.X && w.gui.mouse.Pos.X < iWPos.X+int(iW.GetWidth()) &&
+			w.gui.mouse.Pos.Y >= iWPos.Y && w.gui.mouse.Pos.Y < iWPos.Y+int(iW.GetHeight()) {
+			if !iW.GetMouseIn() {
+				iW.SetMouseIn(true)
+				iW.onMouseIn()
+			}
+			if w.gui.focus != iW {
+				w.gui.focus = iW
+			}
+		} else {
+			if iW.GetMouseIn() {
+				iW.SetMouseIn(false)
+				iW.onMouseOut()
+			}
+			iW.SetMouseL(false)
+			if iW == w.gui.focus {
+				w.gui.focus = nil
+			}
+		}
+	}
+
+	// Update Mouse click/press/etc
+	if iW.GetMouseIn() || (!w.gui.mouse.Visible && iW == w.gui.focus) {
+		if w.gui.mouse.LButton && !iW.GetMouseL() {
+			iW.SetMouseL(true)
+			iW.onButtonPress()
+		} else if !w.gui.mouse.LButton && iW.GetMouseL() {
+			iW.onButtonRelease()
+			w.gui.keyboardFocus = nil
+			if iW.GetMouseL() {
+				iW.onButtonClick()
+			}
+			iW.SetMouseL(false)
+		} else if w.gui.mouse.LButtonPressed {
+			w.gui.keyboardFocus = nil
+			iW.onButtonClick()
+		}
+	}
+
 }
 
 //
