@@ -46,7 +46,6 @@ func (g *Gui) UpdateWidgets(dt float32) {
 			w.Update(w)
 		}
 	}
-	// g.updateWidgetsIntern(k)
 }
 
 //
