@@ -20,7 +20,7 @@ func main() {
 	// Initiate a Raylib windowed virtual Console for drawing to
 	console := gui.NewRaylibConsole(screenWidth, screenHeight, 60, "example: gui", font, false)
 
-	// gui.NewGui(console)
+	g := gui.NewGui(console)
 
 	console.SetChar('a', cardinal.Position{1, 1}, rl.Red, rl.Color{})
 	console.SetChar('b', cardinal.Position{2, 1}, rl.Red, rl.Color{})
@@ -31,6 +31,8 @@ func main() {
 		rl.BeginDrawing()
 		rl.ClearBackground(rl.RayWhite)
 
+		gui.UpdateMouseStatus()
+		g.UpdateWidgets()
 		console.Draw()
 
 		rl.EndDrawing()

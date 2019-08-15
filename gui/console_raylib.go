@@ -2,12 +2,17 @@ package gui
 
 import (
 	rl "github.com/gen2brain/raylib-go/raylib"
+	"github.com/go-rogue/engine/cardinal"
 	"github.com/go-rogue/engine/sprites"
 )
 
 type RaylibConsole struct {
 	Console
 	tileset *sprites.Tileset
+}
+
+func PositionFromVec2(vector2 rl.Vector2) cardinal.Position {
+	return cardinal.Position{X: int(vector2.X), Y: int(vector2.Y)}
 }
 
 //
@@ -18,7 +23,7 @@ type RaylibConsole struct {
 // @todo check and return error if division by zero when tile width/height is zero
 //
 func NewRaylibConsole(w, h uint, fps uint, title string, fontProps sprites.TileSetProperties, fullscreen bool) *RaylibConsole {
-
+	// NOTE: Textures and Sounds MUST be loaded after Window/Audio initialization
 	rl.InitWindow(int32(w), int32(h), title)
 	rl.SetTargetFPS(int32(fps))
 
@@ -31,6 +36,17 @@ func NewRaylibConsole(w, h uint, fps uint, title string, fontProps sprites.TileS
 	ret := &RaylibConsole{
 		Console: Console{width: w / ts.GetTileWidth(), height: h / ts.GetTileHeight()},
 		tileset: ts,
+	}
+
+	// Update the Mouse struct (this is because we wont just be handling raylib)
+	UpdateMouseStatus = func() {
+		MouseStatus.Pos = PositionFromVec2(rl.GetMousePosition())
+		MouseStatus.LButton = rl.IsMouseButtonDown(rl.MouseLeftButton)
+		MouseStatus.MButton = rl.IsMouseButtonDown(rl.MouseMiddleButton)
+		MouseStatus.RButton = rl.IsMouseButtonDown(rl.MouseRightButton)
+		MouseStatus.LButtonPressed = rl.IsMouseButtonPressed(rl.MouseLeftButton)
+		MouseStatus.MButtonPressed = rl.IsMouseButtonPressed(rl.MouseMiddleButton)
+		MouseStatus.RButtonPressed = rl.IsMouseButtonPressed(rl.MouseRightButton)
 	}
 
 	ret.init() // this is found on the parent Console

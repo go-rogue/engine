@@ -24,7 +24,7 @@ type IConsole interface {
 	GetCharForeground(pos cardinal.Position) rl.Color
 	SetCharBackground(pos cardinal.Position, color rl.Color)
 	SetCharForeground(pos cardinal.Position, color rl.Color)
-	SetChar(r int, p cardinal.Position, fg, bg rl.Color)
+	SetChar(r uint, p cardinal.Position, fg, bg rl.Color)
 	//PutChar(x, y, c int, flag BkgndFlag)
 	//PutCharEx(x, y, c int, fore, back Color)
 	Print(pos cardinal.Position, fmts string, v ...interface{})
@@ -40,7 +40,7 @@ type IConsole interface {
 	//Hline(x, y, l int, flag BkgndFlag)
 	//Vline(x, y, l int, flag BkgndFlag)
 	//PrintFrame(x, y, w, h int, empty bool, flag BkgndFlag, fmts string, v ...interface{})
-	GetChar(pos cardinal.Position) int
+	GetChar(pos cardinal.Position) uint
 	GetWidth() uint
 	GetHeight() uint
 	SetKeyColor(color rl.Color)

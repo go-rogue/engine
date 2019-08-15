@@ -11,6 +11,74 @@ type Gui struct {
 	//tbs           *TextBoxStatic
 }
 
+//
+// Add a Widget to the Gui
+//
+func (g *Gui) Register(w IWidget) {
+	w.SetGui(g)
+	g.widgetVector = append(g.widgetVector, w)
+}
+
+//
+// Remove a Widget from the Gui
+//
+func (g *Gui) Unregister(w IWidget) {
+	if g.focus == w {
+		g.focus = nil
+	}
+	if g.keyboardFocus == w {
+		g.keyboardFocus = nil
+	}
+	for i, e := range g.widgetVector {
+		if e == w {
+			g.widgetVector = append(g.widgetVector[0:i], g.widgetVector[i+1:]...)
+		}
+	}
+}
+
+func (g *Gui) UpdateWidgets( /* k Key */ ) {
+	g.mouse = *MouseStatus
+	// g.updateWidgetsIntern(k)
+}
+
+//
+// Set the Console the Gui should render to
+//
+func (g *Gui) SetConsole(console IConsole) {
+	g.con = console
+}
+
+//
+// Set the focused Widget for mouse input
+//
+func (g *Gui) IsFocused(w IWidget) bool {
+	return g.focus == w
+}
+
+//
+// Set the focused Widget for keyboard input
+//
+func (g *Gui) IsKeyboardFocused(w IWidget) bool {
+	return g.keyboardFocus == w
+}
+
+//
+// Get the focused Widget for mouse input
+//
+func (g *Gui) GetFocusedWidget() IWidget {
+	return g.focus
+}
+
+//
+// Get the focused Widget for keyboard input
+//
+func (g *Gui) GetFocusedKeyboardWidget() IWidget {
+	return g.keyboardFocus
+}
+
+//
+// Construct a new Gui
+//
 func NewGui(console IConsole) *Gui {
 	return &Gui{
 		con:          console,
