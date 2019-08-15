@@ -54,6 +54,7 @@ func NewRaylibConsole(w, h uint, fps uint, title string, fontProps sprites.TileS
 		MouseStatus.MButtonPressed = rl.IsMouseButtonPressed(rl.MouseMiddleButton)
 		MouseStatus.RButtonPressed = rl.IsMouseButtonPressed(rl.MouseRightButton)
 		MouseStatus.WindowFocus = mousePos.X > 0 && mousePos.Y > 0 && mousePos.X < float32(rl.GetScreenWidth()) && mousePos.Y < float32(rl.GetScreenHeight())
+		MouseStatus.Visible = !rl.IsCursorHidden()
 	}
 
 	ret.init() // this is found on the parent Console
