@@ -18,4 +18,5 @@ type Mouse struct {
 	WheelDown      bool
 	WindowFocus    bool
 	Visible        bool
+	Supported      bool
 }

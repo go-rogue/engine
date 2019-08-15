@@ -39,6 +39,9 @@ func NewRaylibConsole(w, h uint, fps uint, title string, fontProps sprites.TileS
 		tileset: ts,
 	}
 
+	// Raylib does support mouse input
+	MouseStatus.Supported = true
+
 	// Update the Mouse struct (this is because we wont just be handling raylib)
 	UpdateMouseStatus = func() {
 		mousePos := rl.GetMousePosition()
