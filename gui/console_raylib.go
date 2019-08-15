@@ -4,6 +4,7 @@ import (
 	rl "github.com/gen2brain/raylib-go/raylib"
 	"github.com/go-rogue/engine/cardinal"
 	"github.com/go-rogue/engine/sprites"
+	"math"
 )
 
 type RaylibConsole struct {
@@ -40,13 +41,19 @@ func NewRaylibConsole(w, h uint, fps uint, title string, fontProps sprites.TileS
 
 	// Update the Mouse struct (this is because we wont just be handling raylib)
 	UpdateMouseStatus = func() {
-		MouseStatus.Pos = PositionFromVec2(rl.GetMousePosition())
+		mousePos := rl.GetMousePosition()
+		position := PositionFromVec2(mousePos)
+		position.X = int(math.Floor(float64(position.X / int(ts.GetTileWidth()))))
+		position.Y = int(math.Floor(float64(position.Y / int(ts.GetTileHeight()))))
+
+		MouseStatus.Pos = position
 		MouseStatus.LButton = rl.IsMouseButtonDown(rl.MouseLeftButton)
 		MouseStatus.MButton = rl.IsMouseButtonDown(rl.MouseMiddleButton)
 		MouseStatus.RButton = rl.IsMouseButtonDown(rl.MouseRightButton)
 		MouseStatus.LButtonPressed = rl.IsMouseButtonPressed(rl.MouseLeftButton)
 		MouseStatus.MButtonPressed = rl.IsMouseButtonPressed(rl.MouseMiddleButton)
 		MouseStatus.RButtonPressed = rl.IsMouseButtonPressed(rl.MouseRightButton)
+		MouseStatus.WindowFocus = mousePos.X > 0 && mousePos.Y > 0 && mousePos.X < float32(rl.GetScreenWidth()) && mousePos.Y < float32(rl.GetScreenHeight())
 	}
 
 	ret.init() // this is found on the parent Console

@@ -16,4 +16,5 @@ type Mouse struct {
 	MButtonPressed bool
 	WheelUp        bool
 	WheelDown      bool
+	WindowFocus    bool
 }
