@@ -36,8 +36,16 @@ func (g *Gui) Unregister(w IWidget) {
 	}
 }
 
-func (g *Gui) UpdateWidgets( /* k Key */ ) {
+func (g *Gui) UpdateWidgets(dt float32) {
 	g.mouse = *MouseStatus
+	g.elapsed = dt
+
+	for _, w := range g.widgetVector {
+		if w.IsVisible() {
+			w.ComputeSize()
+			w.Update(w)
+		}
+	}
 	// g.updateWidgetsIntern(k)
 }
 

@@ -61,7 +61,7 @@ func NewRaylibConsole(w, h uint, fps uint, title string, fontProps sprites.TileS
 	return ret
 }
 
-func (c RaylibConsole) Draw() {
+func (c RaylibConsole) Draw(dt float32) {
 	for pos, cell := range *c.GetData() {
 		c.tileset.GetSpriteForChar(cell.char).Draw(pos, cell.fg, cell.bg)
 	}
