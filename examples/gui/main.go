@@ -2,6 +2,7 @@ package main
 
 import (
 	rl "github.com/gen2brain/raylib-go/raylib"
+	"github.com/go-rogue/engine/cardinal"
 	"github.com/go-rogue/engine/gui"
 	"github.com/go-rogue/engine/sprites"
 )
@@ -23,10 +24,10 @@ func main() {
 
 	iGui := gui.NewGui(console)
 
-	//console.SetChar('a', cardinal.Position{1, 1}, rl.Red, rl.Color{})
-	//console.SetChar('b', cardinal.Position{2, 1}, rl.Red, rl.Color{})
-	//console.SetChar('c', cardinal.Position{3, 1}, rl.Red, rl.Color{})
-	//console.SetChar('@', cardinal.Position{4, 1}, rl.Red, rl.Color{})
+	console.SetChar('a', cardinal.Position{1, 1}, rl.Red, rl.Color{})
+	console.PutChar('b', cardinal.Position{2, 1})
+	console.Print(cardinal.Position{1, 2}, "Hello World!")
+	console.Print(cardinal.Position{1, 3}, "<%FG:colour_name>Text...<%/> Not Command Wrapped Text... <Help?>")
 
 	for !rl.WindowShouldClose() {
 		rl.BeginDrawing()
