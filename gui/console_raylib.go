@@ -17,7 +17,8 @@ func PositionFromVec2(vector2 rl.Vector2) cardinal.Position {
 }
 
 //
-// Create a new Virtual console wrapped in a Raylib window; only one of these should be used per application.
+// Create a new Virtual console wrapped in a Raylib window; only one of these should
+// be used per application. In libtcod parlance this is a root console.
 //
 // For a Windowed console the width/height of Console is equivalent to columns/rows.
 //
@@ -35,7 +36,7 @@ func NewRaylibConsole(w, h uint, fps uint, title string, fontProps sprites.TileS
 	ts := sprites.NewTileSetFromProps(fontProps)
 
 	ret := &RaylibConsole{
-		Console: Console{width: w / ts.GetTileWidth(), height: h / ts.GetTileHeight()},
+		Console: *NewVirtualConsole(w/ts.GetTileWidth(), h/ts.GetTileHeight()),
 		tileset: ts,
 	}
 
@@ -60,7 +61,7 @@ func NewRaylibConsole(w, h uint, fps uint, title string, fontProps sprites.TileS
 		MouseStatus.Visible = !rl.IsCursorHidden()
 	}
 
-	ret.init() // this is found on the parent Console
+	ret.init() // this is found on the parent Console struct
 
 	return ret
 }
