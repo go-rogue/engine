@@ -48,6 +48,17 @@ func (g *Gui) UpdateWidgets(dt float32) {
 	}
 }
 
+func (g *Gui) RenderWidgets() {
+	for _, w := range g.widgetVector {
+		if w.IsVisible() {
+			fore, back := g.con.GetDefaultForeground(), g.con.GetDefaultBackground()
+			w.Render(w)
+			g.con.SetDefaultForeground(fore)
+			g.con.SetDefaultBackground(back)
+		}
+	}
+}
+
 //
 // Set the Console the Gui should render to
 //

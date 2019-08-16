@@ -3,7 +3,20 @@ package gui
 import (
 	rl "github.com/gen2brain/raylib-go/raylib"
 	"github.com/go-rogue/engine/cardinal"
+	"github.com/go-rogue/engine/sprites"
 )
+
+type BorderStyle struct {
+	V, H, NE, SE, SW, NW uint
+}
+
+var SingleWallBorder = BorderStyle{
+	sprites.TCOD_CHAR_VLINE, sprites.TCOD_CHAR_HLINE, sprites.TCOD_CHAR_NE, sprites.TCOD_CHAR_SE, sprites.TCOD_CHAR_SW, sprites.TCOD_CHAR_NW,
+}
+
+var ZeroWallBorder = BorderStyle{
+	0, 0, 0, 0, 0, 0,
+}
 
 type IWidget interface {
 	SetGui(*Gui)
@@ -38,7 +51,7 @@ type IWidget interface {
 	onButtonPress()
 	onButtonRelease()
 	onButtonClick()
-	expand(x, y int)
+	expand(width, height uint)
 }
 
 type Widget struct {
@@ -253,7 +266,7 @@ func (w *Widget) onButtonClick() {
 	// abstract
 }
 
-func (w *Widget) expand(x, y int) {
+func (w *Widget) expand(width, height uint) {
 	// abstract
 }
 

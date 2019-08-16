@@ -119,6 +119,7 @@ type IConsole interface {
 	// SPrintf(pos cardinal.Position, fmts string, v ...interface{})
 	//PrintEx(pos cardinal.Position, flag BkgndFlag, alignment Alignment, fmts string, v ...interface{})
 	//PrintRect(x, y, w, h int, fmts string, v ...interface{}) int
+	PrintRectStyle(pos cardinal.Position, w, h uint, boxStyle BorderStyle)
 	//PrintRectEx(x, y, w, h int, flag BkgndFlag, alignment Alignment, fmts string, v ...interface{}) int
 	//HeightRect(x, y, w, h int, fmts string, v ...interface{}) int
 	//SetBackgroundFlag(flag BkgndFlag)
@@ -253,6 +254,17 @@ func (c *Console) Print(pos cardinal.Position, str string) {
 	}
 }
 
+func (c *Console) PrintRectStyle(pos cardinal.Position, w, h uint, boxStyle BorderStyle) {
+
+	// Top/Bottom
+	for x := uint(pos.X); x < w; x++ {
+		c.SetChar(boxStyle.H, cardinal.Position{X: int(x), Y: pos.Y}, rl.White, rl.Black)
+		c.SetChar(boxStyle.H, cardinal.Position{X: int(x), Y: pos.Y + int(h)}, rl.White, rl.Black)
+		//c.SetChar(boxStyle.H, cardinal.Position{X: int(x), Y: int(c.Height - 1)}, GameColours[c.borderColor[2]], GameColours["Bg"])
+	}
+
+}
+
 func (c Console) GetChar(pos cardinal.Position) uint {
 	return (*c.data)[pos].char
 }
@@ -266,7 +278,7 @@ func (c Console) GetHeight() uint {
 }
 
 func (c *Console) SetKeyColor(colour rl.Color) {
-
+	// @todo
 }
 
 //

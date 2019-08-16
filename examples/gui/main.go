@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	rl "github.com/gen2brain/raylib-go/raylib"
 	"github.com/go-rogue/engine/cardinal"
 	"github.com/go-rogue/engine/gui"
@@ -30,6 +31,11 @@ func main() {
 	console.Print(cardinal.Position{1, 3}, "<%FG:red>Text...<%/> Not Command Wrapped Text... <Help?>")
 	console.Print(cardinal.Position{1, 4}, "<%FG:white,BG:red>Text, <%FG:blue>this has depth<%/> this doesn't. <%BG:blue>blue bg<%/>...<%/> back to normal")
 
+	iGui.NewButton(cardinal.Position{1, 10}, 12, 3, "hello", "", gui.SingleWallBorder, func(w gui.IWidget, userData interface{}) {
+		fmt.Println("btn clicked")
+		fmt.Println(w.GetWidth(), w.GetHeight())
+	}, nil)
+
 	for !rl.WindowShouldClose() {
 		rl.BeginDrawing()
 		rl.ClearBackground(console.GetDefaultBackground())
@@ -38,6 +44,7 @@ func main() {
 
 		gui.UpdateMouseStatus()
 		iGui.UpdateWidgets(dt)
+		iGui.RenderWidgets()
 		console.Draw(dt)
 
 		rl.EndDrawing()
