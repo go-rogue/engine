@@ -3,9 +3,10 @@ package gui
 import "C"
 import (
 	"bytes"
-	"fmt"
+	"container/list"
 	rl "github.com/gen2brain/raylib-go/raylib"
 	"github.com/go-rogue/engine/cardinal"
+	"strings"
 )
 
 type CellLayer struct {
@@ -19,6 +20,86 @@ type Cell struct {
 }
 
 type CellMap map[cardinal.Position]*Cell
+
+type printCommand struct {
+	fg rl.Color
+	bg rl.Color
+}
+
+func (p printCommand) AsFgBg() (rl.Color, rl.Color) {
+	return p.fg, p.bg
+}
+
+func (p printCommand) Copy() *printCommand {
+	return &printCommand{fg: p.fg, bg: p.bg}
+}
+
+type printVM struct {
+	queue *list.List
+}
+
+// tmp
+func StrToColour(str string) rl.Color {
+	if str == "white" {
+		return rl.White
+	} else if str == "black" {
+		return rl.Black
+	} else if str == "red" {
+		return rl.Red
+	} else if str == "blue" {
+		return rl.Blue
+	}
+
+	return rl.Black
+}
+
+func (p printVM) iExecute(cmd string, cCmd *printCommand) {
+	command := strings.Split(cmd, ":")
+	which := strings.ToLower(command[0])
+	colour := StrToColour(command[1])
+
+	if which == "fg" {
+		cCmd.fg = colour
+	} else if which == "bg" {
+		cCmd.bg = colour
+	}
+}
+
+func (p *printVM) Execute(cmd string) {
+	if cmd == "" {
+		return
+	}
+
+	cCmd := p.Peek().Copy()
+
+	if strings.ContainsRune(cmd, ',') {
+		commands := strings.Split(cmd, ",")
+		for _, c := range commands {
+			p.iExecute(c, cCmd)
+		}
+	} else {
+		p.iExecute(cmd, cCmd)
+	}
+
+	p.queue.PushBack(*cCmd)
+}
+
+func (p *printVM) Peek() printCommand {
+	return p.queue.Back().Value.(printCommand)
+}
+
+func (p *printVM) Remove() {
+	if p.queue.Len() == 1 {
+		return
+	}
+	p.queue.Remove(p.queue.Back())
+}
+
+func newPrintVM(initial printCommand) *printVM {
+	ret := &printVM{queue: list.New()}
+	ret.queue.PushBack(initial)
+	return ret
+}
 
 type IConsole interface {
 	GetData() *CellMap
@@ -35,7 +116,7 @@ type IConsole interface {
 	PutChar(r uint, p cardinal.Position)
 	//PutCharEx(x, y, c int, fore, back Color)
 	Print(pos cardinal.Position, str string)
-	SPrintf(pos cardinal.Position, fmts string, v ...interface{})
+	// SPrintf(pos cardinal.Position, fmts string, v ...interface{})
 	//PrintEx(pos cardinal.Position, flag BkgndFlag, alignment Alignment, fmts string, v ...interface{})
 	//PrintRect(x, y, w, h int, fmts string, v ...interface{}) int
 	//PrintRectEx(x, y, w, h int, flag BkgndFlag, alignment Alignment, fmts string, v ...interface{}) int
@@ -115,37 +196,46 @@ func (c *Console) SetChar(r uint, p cardinal.Position, fg, bg rl.Color) {
 	(*c.data)[p] = &Cell{char: r, fg: fg, bg: bg}
 }
 
+//
+// Split str into individual runes and then loop over and set the
+// char at that cardinal position.
+//
+// <%FG:colour_name>Text<%/>
+// <%BG:colour_name>Text<%/>
+// <%FG:colour_name,BG:colour_name>Text<%/>
+//
 func (c *Console) Print(pos cardinal.Position, str string) {
-	//strLen := uint(pos.X + utf8.RuneCountInString(str))
-
-	// Split str into individual runes and then loop over and set the
-	// char at that cardinal position.
-
-	// <%FG:colour_name>Text<%/>
-	// <%BG:colour_name>Text<%/>
-	// <%FG:colour_name,BG:colour_name>Text<%/>
-	// <%RESET/>
-
+	// Split string into runes
 	split := []rune(str)
-	fg := c.defaultFg
-	bg := c.defaultBg
+
+	vm := newPrintVM(printCommand{fg: c.defaultFg, bg: c.defaultBg})
+
+	// default command read to false
 	readCommand := false
+
+	// Setup string buffer
 	buf := bytes.Buffer{}
 
-	xOff := 0 // Remove x spacing added by command characters
+	// Remove x spacing added by command characters
+	xOff := 0
 
 	for i, r := range split {
-		if (r == '<' && split[i+1] == '%' && (split[i+2] == 'F' || split[i+2] == 'B' || split[i+2] == 'R')) || (r == '<' && split[i+1] == '%') {
+		if r == '<' && split[i+1] == '%' && (split[i+2] == 'F' || split[i+2] == 'B') {
+			// Begin opening command <%...>
+			readCommand = true
+			xOff--
+			continue
+		} else if r == '<' && split[i+1] == '%' && split[i+2] == '/' && split[i+3] == '>' {
+			// Begin closing command <%/>
+			vm.Remove()
 			readCommand = true
 			xOff--
 			continue
 		} else if r == '>' && readCommand == true {
+			// Complete reading command, if this is not a <%/> then
+			// the string passed to vm will not be empty.
 			readCommand = false
-
-			command := buf.String()
-			if command != "" {
-				fmt.Println("cmd: ", command)
-			}
+			vm.Execute(buf.String())
 			buf.Reset()
 			xOff--
 			continue
@@ -157,14 +247,10 @@ func (c *Console) Print(pos cardinal.Position, str string) {
 				buf.WriteRune(r)
 			}
 		} else {
+			fg, bg := vm.Peek().AsFgBg()
 			(*c.data)[cardinal.Position{X: pos.X + i + xOff, Y: pos.Y}] = &Cell{char: uint(r), bg: bg, fg: fg}
 		}
 	}
-}
-
-// May not actually use this...
-func (c *Console) SPrintf(pos cardinal.Position, format string, v ...interface{}) {
-	// s := fmt.Sprintf(format, v...)
 }
 
 func (c Console) GetChar(pos cardinal.Position) uint {

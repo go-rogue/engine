@@ -27,7 +27,8 @@ func main() {
 	console.SetChar('a', cardinal.Position{1, 1}, rl.Red, rl.Color{})
 	console.PutChar('b', cardinal.Position{2, 1})
 	console.Print(cardinal.Position{1, 2}, "Hello World!")
-	console.Print(cardinal.Position{1, 3}, "<%FG:colour_name>Text...<%/> Not Command Wrapped Text... <Help?>")
+	console.Print(cardinal.Position{1, 3}, "<%FG:red>Text...<%/> Not Command Wrapped Text... <Help?>")
+	console.Print(cardinal.Position{1, 4}, "<%FG:white,BG:red>Text, <%FG:blue>this has depth<%/> this doesn't. <%BG:blue>blue bg<%/>...<%/> back to normal")
 
 	for !rl.WindowShouldClose() {
 		rl.BeginDrawing()
