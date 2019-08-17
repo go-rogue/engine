@@ -93,7 +93,7 @@ func (b *Button) onButtonRelease() {
 }
 
 func (b *Button) onButtonClick() {
-	if b.callback != nil {
+	if b.disabled == false && b.callback != nil {
 		b.callback(b, b.userData)
 	}
 }
