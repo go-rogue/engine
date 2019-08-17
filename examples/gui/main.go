@@ -25,16 +25,24 @@ func main() {
 
 	iGui := gui.NewGui(console)
 
-	console.SetChar('a', cardinal.Position{1, 1}, rl.Red, rl.Color{})
+	console.PutCharEx('a', cardinal.Position{1, 1}, rl.Red, rl.Color{})
 	console.PutChar('b', cardinal.Position{2, 1})
 	console.Print(cardinal.Position{1, 2}, "Hello World!")
 	console.Print(cardinal.Position{1, 3}, "<%FG:red>Text...<%/> Not Command Wrapped Text... <Help?>")
 	console.Print(cardinal.Position{1, 4}, "<%FG:white,BG:red>Text, <%FG:blue>this has depth<%/> this doesn't. <%BG:blue>blue bg<%/>...<%/> back to normal")
 
-	iGui.NewButton(cardinal.Position{1, 10}, 12, 3, "hello", "", gui.SingleWallBorder, func(w gui.IWidget, userData interface{}) {
-		fmt.Println("btn clicked")
-		fmt.Println(w.GetWidth(), w.GetHeight())
+	iGui.NewButton(cardinal.Position{1, 10}, 11, 3, "hello", "", gui.SingleWallBorder, func(w *gui.Button, userData interface{}) {
+		if w.GetLabel() == "hello" {
+			w.SetLabel("goodbye")
+		} else {
+			w.SetLabel("hello")
+		}
 	}, nil)
+
+	iGui.NewButton(cardinal.Position{1, 15}, 21, 7, "Click Me", "", gui.SingleWallBorder, func(w *gui.Button, userData interface{}) {
+		w.SetUserData(w.GetUserData().(int) + 1)
+		w.SetLabel(fmt.Sprintf("Clicked %d", w.GetUserData().(int)))
+	}, 0)
 
 	for !rl.WindowShouldClose() {
 		rl.BeginDrawing()

@@ -39,6 +39,7 @@ type printVM struct {
 }
 
 // tmp
+// @todo replace with theme service
 func StrToColour(str string) rl.Color {
 	if str == "white" {
 		return rl.White
@@ -103,6 +104,7 @@ func newPrintVM(initial printCommand) *printVM {
 
 type IConsole interface {
 	GetData() *CellMap
+	GetCellAtPos(pos cardinal.Position) *Cell
 	GetDefaultBackground() rl.Color
 	GetDefaultForeground() rl.Color
 	SetDefaultForeground(colour rl.Color)
@@ -112,14 +114,13 @@ type IConsole interface {
 	GetCharForeground(pos cardinal.Position) rl.Color
 	SetCharBackground(pos cardinal.Position, colour rl.Color)
 	SetCharForeground(pos cardinal.Position, colour rl.Color)
-	SetChar(r uint, p cardinal.Position, fg, bg rl.Color)
+	SetChar(r uint, pos cardinal.Position)
 	PutChar(r uint, p cardinal.Position)
-	//PutCharEx(x, y, c int, fore, back Color)
+	PutCharEx(r uint, p cardinal.Position, fg, bg rl.Color)
 	Print(pos cardinal.Position, str string)
-	// SPrintf(pos cardinal.Position, fmts string, v ...interface{})
-	//PrintEx(pos cardinal.Position, flag BkgndFlag, alignment Alignment, fmts string, v ...interface{})
 	//PrintRect(x, y, w, h int, fmts string, v ...interface{}) int
-	PrintRectStyle(pos cardinal.Position, w, h uint, boxStyle BorderStyle)
+	ClearRect(pos cardinal.Position, w, h uint)
+	PrintRectStyle(pos cardinal.Position, w, h uint, boxStyle BorderStyle, filled, clear bool)
 	//PrintRectEx(x, y, w, h int, flag BkgndFlag, alignment Alignment, fmts string, v ...interface{}) int
 	//HeightRect(x, y, w, h int, fmts string, v ...interface{}) int
 	//SetBackgroundFlag(flag BkgndFlag)
@@ -147,10 +148,20 @@ type Console struct {
 func (c *Console) init() {
 	cMap := make(CellMap)
 	c.data = &cMap
+
+	for cY := 0; cY < int(c.height); cY++ {
+		for cX := 0; cX < int(c.width); cX++ {
+			c.PutChar(' ', cardinal.Position{X: cX, Y: cY})
+		}
+	}
 }
 
 func (c Console) GetData() *CellMap {
 	return c.data
+}
+
+func (c *Console) GetCellAtPos(pos cardinal.Position) *Cell {
+	return (*c.data)[pos]
 }
 
 func (c Console) GetDefaultBackground() rl.Color {
@@ -176,6 +187,10 @@ func (c *Console) Clear() {
 	c.init()
 }
 
+func (c *Console) SetChar(r uint, pos cardinal.Position) {
+	(*c.data)[pos].char = r
+}
+
 func (c Console) GetCharBackground(pos cardinal.Position) rl.Color {
 	return (*c.data)[pos].bg
 }
@@ -193,7 +208,7 @@ func (c *Console) PutChar(r uint, p cardinal.Position) {
 	(*c.data)[p] = &Cell{char: r, fg: c.defaultFg, bg: c.defaultBg}
 }
 
-func (c *Console) SetChar(r uint, p cardinal.Position, fg, bg rl.Color) {
+func (c *Console) PutCharEx(r uint, p cardinal.Position, fg, bg rl.Color) {
 	(*c.data)[p] = &Cell{char: r, fg: fg, bg: bg}
 }
 
@@ -254,15 +269,48 @@ func (c *Console) Print(pos cardinal.Position, str string) {
 	}
 }
 
-func (c *Console) PrintRectStyle(pos cardinal.Position, w, h uint, boxStyle BorderStyle) {
+//
+// Reset cells within the Rectangular area to default
+//
+func (c *Console) ClearRect(pos cardinal.Position, w, h uint) {
+	for y := 0; y < int(h)-1; y++ {
+		for x := pos.X; x < int(w); x++ {
+			c.SetChar(' ', cardinal.Position{X: pos.X + x, Y: pos.Y + y})
+		}
+	}
+}
 
-	// Top/Bottom
-	for x := uint(pos.X); x < w; x++ {
-		c.SetChar(boxStyle.H, cardinal.Position{X: int(x), Y: pos.Y}, rl.White, rl.Black)
-		c.SetChar(boxStyle.H, cardinal.Position{X: int(x), Y: pos.Y + int(h)}, rl.White, rl.Black)
-		//c.SetChar(boxStyle.H, cardinal.Position{X: int(x), Y: int(c.Height - 1)}, GameColours[c.borderColor[2]], GameColours["Bg"])
+func (c *Console) PrintRectStyle(pos cardinal.Position, w, h uint, boxStyle BorderStyle, filled, clear bool) {
+	if clear {
+		c.ClearRect(pos, w, h)
 	}
 
+	// Background
+	if filled {
+		for y := 0; y < int(h)-1; y++ {
+			for x := pos.X; x < int(w); x++ {
+				c.SetCharBackground(cardinal.Position{X: pos.X + x, Y: pos.Y + y}, c.GetDefaultBackground())
+			}
+		}
+	}
+
+	// Top/Bottom
+	for x := uint(pos.X + 1); x < w; x++ {
+		c.PutCharEx(boxStyle.H, cardinal.Position{X: int(x), Y: pos.Y}, rl.White, rl.Black)
+		c.PutCharEx(boxStyle.H, cardinal.Position{X: int(x), Y: pos.Y + int(h-1)}, rl.White, rl.Black)
+	}
+
+	// Left/Right
+	for y := uint(0); y < h-1; y++ {
+		c.PutCharEx(boxStyle.V, cardinal.Position{X: pos.X, Y: pos.Y + int(y)}, rl.White, rl.Black)
+		c.PutCharEx(boxStyle.V, cardinal.Position{X: pos.X + int(w-1), Y: pos.Y + int(y)}, rl.White, rl.Black)
+	}
+
+	// Corners
+	c.PutCharEx(boxStyle.NE, cardinal.Position{X: pos.X + int(w-1), Y: pos.Y}, rl.White, rl.Black)
+	c.PutCharEx(boxStyle.SE, cardinal.Position{X: pos.X + int(w-1), Y: pos.Y + int(h-1)}, rl.White, rl.Black)
+	c.PutCharEx(boxStyle.SW, cardinal.Position{X: pos.X, Y: pos.Y + int(h-1)}, rl.White, rl.Black)
+	c.PutCharEx(boxStyle.NW, cardinal.Position{X: pos.X, Y: pos.Y}, rl.White, rl.Black)
 }
 
 func (c Console) GetChar(pos cardinal.Position) uint {
