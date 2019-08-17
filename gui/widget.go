@@ -32,6 +32,8 @@ type IWidget interface {
 	SetVisible(visible bool)
 	GetUserData() interface{}
 	SetUserData(data interface{})
+	SetDisabled(d bool)
+	GetDisabled() bool
 	GetTip() string
 	SetTip(tip string)
 	GetMouseIn() bool
@@ -55,18 +57,21 @@ type IWidget interface {
 }
 
 type Widget struct {
-	pos       cardinal.Position
-	w, h      uint
-	userData  interface{}
-	tip       string
-	mouseIn   bool
-	mouseL    bool
-	visible   bool
-	back      rl.Color
-	fore      rl.Color
-	backFocus rl.Color
-	foreFocus rl.Color
-	gui       *Gui
+	pos          cardinal.Position
+	w, h         uint
+	userData     interface{}
+	tip          string
+	disabled     bool
+	mouseIn      bool
+	mouseL       bool
+	visible      bool
+	back         rl.Color
+	fore         rl.Color
+	backFocus    rl.Color
+	foreFocus    rl.Color
+	backDisabled rl.Color
+	foreDisabled rl.Color
+	gui          *Gui
 }
 
 type WidgetCallback func(w IWidget, userData interface{})
@@ -123,6 +128,14 @@ func (w *Widget) SetUserData(data interface{}) {
 	w.userData = data
 }
 
+func (w *Widget) SetDisabled(d bool) {
+	w.disabled = d
+}
+
+func (w Widget) GetDisabled() bool {
+	return w.disabled
+}
+
 func (w Widget) GetTip() string {
 	return w.tip
 }
@@ -166,7 +179,10 @@ func (w *Widget) GetDefaultForeground() (col, colFocus rl.Color) {
 }
 
 func (w *Widget) GetCurrentColors() (fore, back rl.Color) {
-	if w.mouseIn {
+	if w.disabled {
+		fore = w.foreDisabled
+		back = w.backDisabled
+	} else if w.mouseIn {
 		fore = w.foreFocus
 		back = w.backFocus
 	} else {
@@ -272,16 +288,19 @@ func (w *Widget) expand(width, height uint) {
 
 func NewWidget(pos cardinal.Position, w, h uint) *Widget {
 	return &Widget{
-		pos:       pos,
-		w:         w,
-		h:         h,
-		mouseIn:   false,
-		mouseL:    false,
-		tip:       "",
-		visible:   true,
-		back:      rl.Color{40, 40, 120, 255},
-		fore:      rl.Color{220, 220, 180, 255},
-		backFocus: rl.Color{70, 70, 130, 255},
-		foreFocus: rl.Color{255, 255, 255, 255},
+		pos:          pos,
+		w:            w,
+		h:            h,
+		mouseIn:      false,
+		mouseL:       false,
+		tip:          "",
+		visible:      true,
+		disabled:     false,
+		back:         rl.Color{40, 40, 120, 255},
+		fore:         rl.Color{220, 220, 180, 255},
+		backFocus:    rl.Color{70, 70, 130, 255},
+		foreFocus:    rl.Color{255, 255, 255, 255},
+		backDisabled: rl.Color{40, 40, 120, 125},
+		foreDisabled: rl.Color{220, 220, 180, 125},
 	}
 }

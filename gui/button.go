@@ -15,7 +15,6 @@ const (
 	BtnTextRight
 )
 
-// @todo add disabled flag
 type Button struct {
 	Widget
 	pressed     bool

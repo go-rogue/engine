@@ -4,6 +4,7 @@ import "C"
 import (
 	"bytes"
 	"container/list"
+	"fmt"
 	rl "github.com/gen2brain/raylib-go/raylib"
 	"github.com/go-rogue/engine/cardinal"
 	"strings"
@@ -273,8 +274,10 @@ func (c *Console) Print(pos cardinal.Position, str string) {
 // Reset cells within the Rectangular area to default
 //
 func (c *Console) ClearRect(pos cardinal.Position, w, h uint) {
+	fmt.Println(pos, w, h)
+
 	for y := 0; y < int(h)-1; y++ {
-		for x := pos.X; x < int(w); x++ {
+		for x := 0; x < int(w); x++ {
 			c.SetChar(' ', cardinal.Position{X: pos.X + x, Y: pos.Y + y})
 		}
 	}
@@ -288,14 +291,14 @@ func (c *Console) PrintRectStyle(pos cardinal.Position, w, h uint, boxStyle Bord
 	// Background
 	if filled {
 		for y := 0; y < int(h)-1; y++ {
-			for x := pos.X; x < int(w); x++ {
+			for x := 0; x < int(w); x++ {
 				c.SetCharBackground(cardinal.Position{X: pos.X + x, Y: pos.Y + y}, c.GetDefaultBackground())
 			}
 		}
 	}
 
 	// Top/Bottom
-	for x := uint(pos.X + 1); x < w; x++ {
+	for x := uint(pos.X + 1); x < uint(pos.X)+w; x++ {
 		c.PutCharEx(boxStyle.H, cardinal.Position{X: int(x), Y: pos.Y}, rl.White, rl.Black)
 		c.PutCharEx(boxStyle.H, cardinal.Position{X: int(x), Y: pos.Y + int(h-1)}, rl.White, rl.Black)
 	}
