@@ -2,7 +2,7 @@ package gui
 
 import (
 	rl "github.com/gen2brain/raylib-go/raylib"
-	"github.com/go-rogue/engine/cardinal"
+	"github.com/go-rogue/engine/geom"
 	"github.com/go-rogue/engine/sprites"
 )
 
@@ -26,8 +26,8 @@ type IWidget interface {
 	SetWidth(width uint)
 	GetHeight() uint
 	SetHeight(height uint)
-	GetPosition() cardinal.Position
-	Move(pos cardinal.Position)
+	GetPosition() geom.Position
+	Move(pos geom.Position)
 	IsVisible() bool
 	SetVisible(visible bool)
 	GetUserData() interface{}
@@ -57,7 +57,7 @@ type IWidget interface {
 }
 
 type Widget struct {
-	pos          cardinal.Position
+	pos          geom.Position
 	w, h         uint
 	userData     interface{}
 	tip          string
@@ -104,11 +104,11 @@ func (w *Widget) SetHeight(height uint) {
 	w.h = height
 }
 
-func (w Widget) GetPosition() cardinal.Position {
+func (w Widget) GetPosition() geom.Position {
 	return w.pos
 }
 
-func (w *Widget) Move(pos cardinal.Position) {
+func (w *Widget) Move(pos geom.Position) {
 	w.pos = pos
 }
 
@@ -286,7 +286,7 @@ func (w *Widget) expand(width, height uint) {
 	// abstract
 }
 
-func NewWidget(pos cardinal.Position, w, h uint) *Widget {
+func NewWidget(pos geom.Position, w, h uint) *Widget {
 	return &Widget{
 		pos:          pos,
 		w:            w,

@@ -1,7 +1,7 @@
 package gui
 
 import (
-	"github.com/go-rogue/engine/cardinal"
+	"github.com/go-rogue/engine/geom"
 	"unicode/utf8"
 )
 
@@ -24,7 +24,7 @@ type Button struct {
 	align       btnTextAlign
 }
 
-func (g *Gui) NewButton(pos cardinal.Position, width, height uint, label string, tip string, borderStyle BorderStyle, callback ButtonCallback, userData interface{}) *Button {
+func (g *Gui) NewButton(pos geom.Position, width, height uint, label string, tip string, borderStyle BorderStyle, callback ButtonCallback, userData interface{}) *Button {
 	btn := &Button{
 		Widget:      *NewWidget(pos, width, height),
 		label:       label,
@@ -53,15 +53,15 @@ func (b *Button) Render(iB IWidget) {
 		con.PrintRectStyle(b.pos, b.w, b.h, SingleWallBorder, true, true)
 	}
 	if b.label != "" {
-		var txtPos cardinal.Position
+		var txtPos geom.Position
 		padX := 2
 
 		if b.align == BtnTextLeft {
-			txtPos = cardinal.Position{b.pos.X + int(padX), b.pos.Y + int(b.h/2)}
+			txtPos = geom.Position{b.pos.X + int(padX), b.pos.Y + int(b.h/2)}
 		} else if b.align == BtnTextCenter {
-			txtPos = cardinal.Position{b.pos.X + int(int(b.w/2)-utf8.RuneCountInString(b.label)/2), b.pos.Y + int(b.h/2)}
+			txtPos = geom.Position{b.pos.X + int(int(b.w/2)-utf8.RuneCountInString(b.label)/2), b.pos.Y + int(b.h/2)}
 		} else if b.align == BtnTextRight {
-			txtPos = cardinal.Position{b.pos.X + int(int(b.w)-utf8.RuneCountInString(b.label)-int(padX)), b.pos.Y + int(b.h/2)}
+			txtPos = geom.Position{b.pos.X + int(int(b.w)-utf8.RuneCountInString(b.label)-int(padX)), b.pos.Y + int(b.h/2)}
 		}
 
 		con.Print(txtPos, b.label)

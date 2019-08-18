@@ -2,7 +2,7 @@ package gui
 
 import (
 	rl "github.com/gen2brain/raylib-go/raylib"
-	"github.com/go-rogue/engine/cardinal"
+	"github.com/go-rogue/engine/geom"
 	"github.com/go-rogue/engine/sprites"
 	"math"
 )
@@ -12,8 +12,8 @@ type RaylibConsole struct {
 	tileset *sprites.Tileset
 }
 
-func PositionFromVec2(vector2 rl.Vector2) cardinal.Position {
-	return cardinal.Position{X: int(vector2.X), Y: int(vector2.Y)}
+func PositionFromVec2(vector2 rl.Vector2) geom.Position {
+	return geom.Position{X: int(vector2.X), Y: int(vector2.Y)}
 }
 
 //

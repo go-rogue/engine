@@ -1,9 +1,9 @@
-package cardinal
+package geom
 
 import rl "github.com/gen2brain/raylib-go/raylib"
 
 //
-// Data structure for storing cardinal coordinates
+// Data structure for storing geom coordinates
 //
 type Position struct {
 	X, Y int

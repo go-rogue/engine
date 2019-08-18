@@ -1,13 +1,13 @@
 package gui
 
-import "github.com/go-rogue/engine/cardinal"
+import "github.com/go-rogue/engine/geom"
 
 var MouseStatus = &Mouse{}
 
 var UpdateMouseStatus func()
 
 type Mouse struct {
-	Pos            cardinal.Position
+	Pos            geom.Position
 	LButton        bool
 	RButton        bool
 	MButton        bool
