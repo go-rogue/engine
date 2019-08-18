@@ -26,8 +26,8 @@ type IWidget interface {
 	SetWidth(width uint)
 	GetHeight() uint
 	SetHeight(height uint)
-	GetPosition() geom.Position
-	Move(pos geom.Position)
+	GetPosition() geom.Point
+	Move(pos geom.Point)
 	IsVisible() bool
 	SetVisible(visible bool)
 	GetUserData() interface{}
@@ -57,7 +57,7 @@ type IWidget interface {
 }
 
 type Widget struct {
-	pos          geom.Position
+	pos          geom.Point
 	w, h         uint
 	userData     interface{}
 	tip          string
@@ -104,11 +104,11 @@ func (w *Widget) SetHeight(height uint) {
 	w.h = height
 }
 
-func (w Widget) GetPosition() geom.Position {
+func (w Widget) GetPosition() geom.Point {
 	return w.pos
 }
 
-func (w *Widget) Move(pos geom.Position) {
+func (w *Widget) Move(pos geom.Point) {
 	w.pos = pos
 }
 
@@ -286,7 +286,7 @@ func (w *Widget) expand(width, height uint) {
 	// abstract
 }
 
-func NewWidget(pos geom.Position, w, h uint) *Widget {
+func NewWidget(pos geom.Point, w, h uint) *Widget {
 	return &Widget{
 		pos:          pos,
 		w:            w,

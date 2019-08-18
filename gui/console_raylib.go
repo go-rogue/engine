@@ -12,8 +12,8 @@ type RaylibConsole struct {
 	tileset *sprites.Tileset
 }
 
-func PositionFromVec2(vector2 rl.Vector2) geom.Position {
-	return geom.Position{X: int(vector2.X), Y: int(vector2.Y)}
+func PositionFromVec2(vector2 rl.Vector2) geom.Point {
+	return geom.Point{X: int(vector2.X), Y: int(vector2.Y)}
 }
 
 //

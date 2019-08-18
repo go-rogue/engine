@@ -7,7 +7,7 @@ var MouseStatus = &Mouse{}
 var UpdateMouseStatus func()
 
 type Mouse struct {
-	Pos            geom.Position
+	Pos            geom.Point
 	LButton        bool
 	RButton        bool
 	MButton        bool

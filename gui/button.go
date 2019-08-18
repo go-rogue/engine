@@ -24,7 +24,7 @@ type Button struct {
 	align       btnTextAlign
 }
 
-func (g *Gui) NewButton(pos geom.Position, width, height uint, label string, tip string, borderStyle BorderStyle, callback ButtonCallback, userData interface{}) *Button {
+func (g *Gui) NewButton(pos geom.Point, width, height uint, label string, tip string, borderStyle BorderStyle, callback ButtonCallback, userData interface{}) *Button {
 	btn := &Button{
 		Widget:      *NewWidget(pos, width, height),
 		label:       label,
@@ -53,15 +53,15 @@ func (b *Button) Render(iB IWidget) {
 		con.PrintRectStyle(b.pos, b.w, b.h, SingleWallBorder, true, true)
 	}
 	if b.label != "" {
-		var txtPos geom.Position
+		var txtPos geom.Point
 		padX := 2
 
 		if b.align == BtnTextLeft {
-			txtPos = geom.Position{b.pos.X + int(padX), b.pos.Y + int(b.h/2)}
+			txtPos = geom.Point{b.pos.X + int(padX), b.pos.Y + int(b.h/2)}
 		} else if b.align == BtnTextCenter {
-			txtPos = geom.Position{b.pos.X + int(int(b.w/2)-utf8.RuneCountInString(b.label)/2), b.pos.Y + int(b.h/2)}
+			txtPos = geom.Point{b.pos.X + int(int(b.w/2)-utf8.RuneCountInString(b.label)/2), b.pos.Y + int(b.h/2)}
 		} else if b.align == BtnTextRight {
-			txtPos = geom.Position{b.pos.X + int(int(b.w)-utf8.RuneCountInString(b.label)-int(padX)), b.pos.Y + int(b.h/2)}
+			txtPos = geom.Point{b.pos.X + int(int(b.w)-utf8.RuneCountInString(b.label)-int(padX)), b.pos.Y + int(b.h/2)}
 		}
 
 		con.Print(txtPos, b.label)

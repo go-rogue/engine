@@ -5,48 +5,48 @@ import rl "github.com/gen2brain/raylib-go/raylib"
 //
 // Data structure for storing geom coordinates
 //
-type Position struct {
+type Point struct {
 	X, Y int
 }
 
-func (pos Position) Vector2(expX, expY int) rl.Vector2 {
-	return rl.Vector2{X: float32(pos.X * expX), Y: float32(pos.Y * expY)}
+func (p Point) Vector2(expX, expY int) rl.Vector2 {
+	return rl.Vector2{X: float32(p.X * expX), Y: float32(p.Y * expY)}
 }
 
 //
 // Generates all points that share a corner with self (NE,SE,SW,NW)
 //
-func (pos Position) DiagonalNeighbours() []Position {
+func (p Point) DiagonalNeighbours() []Point {
 	return nil
 }
 
 //
 // Generates all points that share a horizontal or vertical edge with this one. (N,S,E,W)
 //
-func (pos Position) Neighbours() []Position {
+func (p Point) Neighbours() []Point {
 	return nil
 }
 
 //
 // Of all the positions in candidates, return the one closest to self.
 //
-func (pos Position) GetClosestPosition(candidates []Position) Position {
-	return Position{}
+func (p Point) GetClosestPosition(candidates []Point) Point {
+	return Point{}
 }
 
 //
 // Of all the positions in candidates, return the one farthest from self.
 //
 
-func (pos Position) GetFarthestPosition(candidates []Position) Position {
-	return Position{}
+func (p Point) GetFarthestPosition(candidates []Point) Point {
+	return Point{}
 }
 
 //
 // Returns Manhattan distance between self and target
 //
 
-func (pos Position) ManhattanDistanceTo(p Position) int {
+func (p Point) ManhattanDistanceTo(point Point) int {
 	return 0
 }
 
@@ -54,7 +54,7 @@ func (pos Position) ManhattanDistanceTo(p Position) int {
 // Generates all positions on an L-shaped path between self and target.
 //
 
-func (pos Position) PathLTo(p Position) []Position {
+func (p Point) PathLTo(point Point) []Point {
 	return nil
 }
 
@@ -62,6 +62,6 @@ func (pos Position) PathLTo(p Position) []Position {
 // Generates all positions on a Bresenham algorithm line between self and other.
 //
 
-func (pos Position) PositionsBresenhamTo(p Position) []Position {
+func (p Point) PositionsBresenhamTo(point Point) []Point {
 	return nil
 }

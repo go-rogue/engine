@@ -20,7 +20,7 @@ type Cell struct {
 	fg, bg rl.Color
 }
 
-type CellMap map[geom.Position]*Cell
+type CellMap map[geom.Point]*Cell
 
 type printCommand struct {
 	fg rl.Color
@@ -105,23 +105,23 @@ func newPrintVM(initial printCommand) *printVM {
 
 type IConsole interface {
 	GetData() *CellMap
-	GetCellAtPos(pos geom.Position) *Cell
+	GetCellAtPos(pos geom.Point) *Cell
 	GetDefaultBackground() rl.Color
 	GetDefaultForeground() rl.Color
 	SetDefaultForeground(colour rl.Color)
 	SetDefaultBackground(colour rl.Color)
 	Clear()
-	GetCharBackground(pos geom.Position) rl.Color
-	GetCharForeground(pos geom.Position) rl.Color
-	SetCharBackground(pos geom.Position, colour rl.Color)
-	SetCharForeground(pos geom.Position, colour rl.Color)
-	SetChar(r uint, pos geom.Position)
-	PutChar(r uint, p geom.Position)
-	PutCharEx(r uint, p geom.Position, fg, bg rl.Color)
-	Print(pos geom.Position, str string)
+	GetCharBackground(pos geom.Point) rl.Color
+	GetCharForeground(pos geom.Point) rl.Color
+	SetCharBackground(pos geom.Point, colour rl.Color)
+	SetCharForeground(pos geom.Point, colour rl.Color)
+	SetChar(r uint, pos geom.Point)
+	PutChar(r uint, p geom.Point)
+	PutCharEx(r uint, p geom.Point, fg, bg rl.Color)
+	Print(pos geom.Point, str string)
 	//PrintRect(x, y, w, h int, fmts string, v ...interface{}) int
-	ClearRect(pos geom.Position, w, h uint)
-	PrintRectStyle(pos geom.Position, w, h uint, boxStyle BorderStyle, filled, clear bool)
+	ClearRect(pos geom.Point, w, h uint)
+	PrintRectStyle(pos geom.Point, w, h uint, boxStyle BorderStyle, filled, clear bool)
 	//PrintRectEx(x, y, w, h int, flag BkgndFlag, alignment Alignment, fmts string, v ...interface{}) int
 	//HeightRect(x, y, w, h int, fmts string, v ...interface{}) int
 	//SetBackgroundFlag(flag BkgndFlag)
@@ -132,7 +132,7 @@ type IConsole interface {
 	//Hline(x, y, l int, flag BkgndFlag)
 	//Vline(x, y, l int, flag BkgndFlag)
 	//PrintFrame(x, y, w, h int, empty bool, flag BkgndFlag, fmts string, v ...interface{})
-	GetChar(pos geom.Position) uint
+	GetChar(pos geom.Point) uint
 	GetWidth() uint
 	GetHeight() uint
 	SetKeyColor(colour rl.Color)
@@ -152,7 +152,7 @@ func (c *Console) init() {
 
 	for cY := 0; cY < int(c.height); cY++ {
 		for cX := 0; cX < int(c.width); cX++ {
-			c.PutChar(' ', geom.Position{X: cX, Y: cY})
+			c.PutChar(' ', geom.Point{X: cX, Y: cY})
 		}
 	}
 }
@@ -161,7 +161,7 @@ func (c Console) GetData() *CellMap {
 	return c.data
 }
 
-func (c *Console) GetCellAtPos(pos geom.Position) *Cell {
+func (c *Console) GetCellAtPos(pos geom.Point) *Cell {
 	return (*c.data)[pos]
 }
 
@@ -188,28 +188,28 @@ func (c *Console) Clear() {
 	c.init()
 }
 
-func (c *Console) SetChar(r uint, pos geom.Position) {
+func (c *Console) SetChar(r uint, pos geom.Point) {
 	(*c.data)[pos].char = r
 }
 
-func (c Console) GetCharBackground(pos geom.Position) rl.Color {
+func (c Console) GetCharBackground(pos geom.Point) rl.Color {
 	return (*c.data)[pos].bg
 }
-func (c Console) GetCharForeground(pos geom.Position) rl.Color {
+func (c Console) GetCharForeground(pos geom.Point) rl.Color {
 	return (*c.data)[pos].fg
 }
-func (c *Console) SetCharBackground(pos geom.Position, colour rl.Color) {
+func (c *Console) SetCharBackground(pos geom.Point, colour rl.Color) {
 	(*c.data)[pos].bg = colour
 }
-func (c *Console) SetCharForeground(pos geom.Position, colour rl.Color) {
+func (c *Console) SetCharForeground(pos geom.Point, colour rl.Color) {
 	(*c.data)[pos].fg = colour
 }
 
-func (c *Console) PutChar(r uint, p geom.Position) {
+func (c *Console) PutChar(r uint, p geom.Point) {
 	(*c.data)[p] = &Cell{char: r, fg: c.defaultFg, bg: c.defaultBg}
 }
 
-func (c *Console) PutCharEx(r uint, p geom.Position, fg, bg rl.Color) {
+func (c *Console) PutCharEx(r uint, p geom.Point, fg, bg rl.Color) {
 	(*c.data)[p] = &Cell{char: r, fg: fg, bg: bg}
 }
 
@@ -221,7 +221,7 @@ func (c *Console) PutCharEx(r uint, p geom.Position, fg, bg rl.Color) {
 // <%BG:colour_name>Text<%/>
 // <%FG:colour_name,BG:colour_name>Text<%/>
 //
-func (c *Console) Print(pos geom.Position, str string) {
+func (c *Console) Print(pos geom.Point, str string) {
 	// Split string into runes
 	split := []rune(str)
 
@@ -265,7 +265,7 @@ func (c *Console) Print(pos geom.Position, str string) {
 			}
 		} else {
 			fg, bg := vm.Peek().AsFgBg()
-			(*c.data)[geom.Position{X: pos.X + i + xOff, Y: pos.Y}] = &Cell{char: uint(r), bg: bg, fg: fg}
+			(*c.data)[geom.Point{X: pos.X + i + xOff, Y: pos.Y}] = &Cell{char: uint(r), bg: bg, fg: fg}
 		}
 	}
 }
@@ -273,17 +273,17 @@ func (c *Console) Print(pos geom.Position, str string) {
 //
 // Reset cells within the Rectangular area to default
 //
-func (c *Console) ClearRect(pos geom.Position, w, h uint) {
+func (c *Console) ClearRect(pos geom.Point, w, h uint) {
 	fmt.Println(pos, w, h)
 
 	for y := 0; y < int(h)-1; y++ {
 		for x := 0; x < int(w); x++ {
-			c.SetChar(' ', geom.Position{X: pos.X + x, Y: pos.Y + y})
+			c.SetChar(' ', geom.Point{X: pos.X + x, Y: pos.Y + y})
 		}
 	}
 }
 
-func (c *Console) PrintRectStyle(pos geom.Position, w, h uint, boxStyle BorderStyle, filled, clear bool) {
+func (c *Console) PrintRectStyle(pos geom.Point, w, h uint, boxStyle BorderStyle, filled, clear bool) {
 	if clear {
 		c.ClearRect(pos, w, h)
 	}
@@ -292,31 +292,31 @@ func (c *Console) PrintRectStyle(pos geom.Position, w, h uint, boxStyle BorderSt
 	if filled {
 		for y := 0; y < int(h)-1; y++ {
 			for x := 0; x < int(w); x++ {
-				c.SetCharBackground(geom.Position{X: pos.X + x, Y: pos.Y + y}, c.GetDefaultBackground())
+				c.SetCharBackground(geom.Point{X: pos.X + x, Y: pos.Y + y}, c.GetDefaultBackground())
 			}
 		}
 	}
 
 	// Top/Bottom
 	for x := uint(pos.X + 1); x < uint(pos.X)+w; x++ {
-		c.PutCharEx(boxStyle.H, geom.Position{X: int(x), Y: pos.Y}, rl.White, rl.Black)
-		c.PutCharEx(boxStyle.H, geom.Position{X: int(x), Y: pos.Y + int(h-1)}, rl.White, rl.Black)
+		c.PutCharEx(boxStyle.H, geom.Point{X: int(x), Y: pos.Y}, rl.White, rl.Black)
+		c.PutCharEx(boxStyle.H, geom.Point{X: int(x), Y: pos.Y + int(h-1)}, rl.White, rl.Black)
 	}
 
 	// Left/Right
 	for y := uint(0); y < h-1; y++ {
-		c.PutCharEx(boxStyle.V, geom.Position{X: pos.X, Y: pos.Y + int(y)}, rl.White, rl.Black)
-		c.PutCharEx(boxStyle.V, geom.Position{X: pos.X + int(w-1), Y: pos.Y + int(y)}, rl.White, rl.Black)
+		c.PutCharEx(boxStyle.V, geom.Point{X: pos.X, Y: pos.Y + int(y)}, rl.White, rl.Black)
+		c.PutCharEx(boxStyle.V, geom.Point{X: pos.X + int(w-1), Y: pos.Y + int(y)}, rl.White, rl.Black)
 	}
 
 	// Corners
-	c.PutCharEx(boxStyle.NE, geom.Position{X: pos.X + int(w-1), Y: pos.Y}, rl.White, rl.Black)
-	c.PutCharEx(boxStyle.SE, geom.Position{X: pos.X + int(w-1), Y: pos.Y + int(h-1)}, rl.White, rl.Black)
-	c.PutCharEx(boxStyle.SW, geom.Position{X: pos.X, Y: pos.Y + int(h-1)}, rl.White, rl.Black)
-	c.PutCharEx(boxStyle.NW, geom.Position{X: pos.X, Y: pos.Y}, rl.White, rl.Black)
+	c.PutCharEx(boxStyle.NE, geom.Point{X: pos.X + int(w-1), Y: pos.Y}, rl.White, rl.Black)
+	c.PutCharEx(boxStyle.SE, geom.Point{X: pos.X + int(w-1), Y: pos.Y + int(h-1)}, rl.White, rl.Black)
+	c.PutCharEx(boxStyle.SW, geom.Point{X: pos.X, Y: pos.Y + int(h-1)}, rl.White, rl.Black)
+	c.PutCharEx(boxStyle.NW, geom.Point{X: pos.X, Y: pos.Y}, rl.White, rl.Black)
 }
 
-func (c Console) GetChar(pos geom.Position) uint {
+func (c Console) GetChar(pos geom.Point) uint {
 	return (*c.data)[pos].char
 }
 

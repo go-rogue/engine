@@ -11,7 +11,7 @@ type Sprite struct {
 	t *SpriteSheet
 }
 
-func (s Sprite) Draw(pos geom.Position, fg, bg rl.Color) {
+func (s Sprite) Draw(pos geom.Point, fg, bg rl.Color) {
 	if bg != ColourNC {
 		rl.DrawRectangleV(pos.Vector2(int(s.t.TileWidth), int(s.t.TileHeight)), rl.Vector2{X: float32(s.t.TileWidth), Y: float32(s.t.TileHeight)}, bg)
 	}
