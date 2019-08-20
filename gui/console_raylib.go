@@ -67,9 +67,17 @@ func NewRaylibConsole(w, h uint, fps uint, title string, fontProps sprites.TileS
 }
 
 func (c RaylibConsole) Draw(dt float32) {
-	for pos, cell := range *c.GetData() {
-		c.tileset.GetSpriteForChar(cell.char).Draw(pos, cell.fg, cell.bg)
+	for y := uint(0); y < c.height; y++ {
+		for x := uint(0); x < c.width; x++ {
+			pos := geom.Point{X: int(x), Y: int(y)}
+			cell := c.GetCellAtPos(pos)
+			c.tileset.GetSpriteForChar(cell.char).Draw(pos, cell.fg, cell.bg)
+		}
 	}
+
+	//for pos, cell := range c.Console.GetData() {
+	//	c.tileset.GetSpriteForChar(cell.char).Draw(pos, cell.fg, cell.bg)
+	//}
 }
 
 func (c RaylibConsole) Unload() {

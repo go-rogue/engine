@@ -36,7 +36,6 @@ func main() {
 		w.SetUserData(w.GetUserData().(int) + 1)
 		w.SetLabel(fmt.Sprintf("Clicked %d", w.GetUserData().(int)))
 		vBox.SetX(w.GetUserData().(int))
-		console.Clear()
 	}, 0))
 
 	//console.PutCharEx('a', geom.Point{1, 1}, rl.Red, rl.Color{})
@@ -77,7 +76,6 @@ func main() {
 		rl.ClearBackground(console.GetDefaultBackground())
 
 		dt = rl.GetFrameTime()
-
 		gui.UpdateMouseStatus()
 		iGui.UpdateWidgets(dt)
 		iGui.RenderWidgets()

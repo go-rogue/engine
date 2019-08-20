@@ -116,7 +116,7 @@ func newPrintVM(initial printCommand) *printVM {
 }
 
 type IConsole interface {
-	GetData() *CellMap
+	GetData() CellMap
 	GetCellAtPos(pos geom.Point) *Cell
 	GetDefaultBackground() rl.Color
 	GetDefaultForeground() rl.Color
@@ -153,14 +153,14 @@ type IConsole interface {
 
 type Console struct {
 	width, height        uint
-	data                 *CellMap
+	data                 CellMap
 	defaultBg, defaultFg rl.Color
 }
 
 // Initiates the CellMap
 func (c *Console) init() {
 	cMap := make(CellMap)
-	c.data = &cMap
+	c.data = cMap
 
 	for cY := 0; cY < int(c.height); cY++ {
 		for cX := 0; cX < int(c.width); cX++ {
@@ -169,12 +169,12 @@ func (c *Console) init() {
 	}
 }
 
-func (c Console) GetData() *CellMap {
+func (c Console) GetData() CellMap {
 	return c.data
 }
 
 func (c *Console) GetCellAtPos(pos geom.Point) *Cell {
-	return (*c.data)[pos]
+	return c.data[pos]
 }
 
 func (c Console) GetDefaultBackground() rl.Color {
@@ -201,28 +201,28 @@ func (c *Console) Clear() {
 }
 
 func (c *Console) SetChar(r uint, pos geom.Point) {
-	(*c.data)[pos].char = r
+	c.data[pos].char = r
 }
 
 func (c Console) GetCharBackground(pos geom.Point) rl.Color {
-	return (*c.data)[pos].bg
+	return c.data[pos].bg
 }
 func (c Console) GetCharForeground(pos geom.Point) rl.Color {
-	return (*c.data)[pos].fg
+	return c.data[pos].fg
 }
 func (c *Console) SetCharBackground(pos geom.Point, colour rl.Color) {
-	(*c.data)[pos].bg = colour
+	c.data[pos].bg = colour
 }
 func (c *Console) SetCharForeground(pos geom.Point, colour rl.Color) {
-	(*c.data)[pos].fg = colour
+	c.data[pos].fg = colour
 }
 
 func (c *Console) PutChar(r uint, p geom.Point) {
-	(*c.data)[p] = &Cell{char: r, fg: c.defaultFg, bg: c.defaultBg}
+	c.data[p] = &Cell{char: r, fg: c.defaultFg, bg: sprites.ColourNC}
 }
 
 func (c *Console) PutCharEx(r uint, p geom.Point, fg, bg rl.Color) {
-	(*c.data)[p] = &Cell{char: r, fg: fg, bg: bg}
+	c.data[p] = &Cell{char: r, fg: fg, bg: bg}
 }
 
 //
@@ -277,7 +277,7 @@ func (c *Console) Print(pos geom.Point, str string) {
 			}
 		} else {
 			fg, bg := vm.Peek().AsFgBg()
-			(*c.data)[geom.Point{X: pos.X + i + xOff, Y: pos.Y}] = &Cell{char: uint(r), bg: bg, fg: fg}
+			c.data[geom.Point{X: pos.X + i + xOff, Y: pos.Y}] = &Cell{char: uint(r), bg: bg, fg: fg}
 		}
 	}
 }
@@ -327,7 +327,7 @@ func (c *Console) PrintFrame(pos geom.Point, w, h uint, style FrameStyle, filled
 }
 
 func (c Console) GetChar(pos geom.Point) uint {
-	return (*c.data)[pos].char
+	return c.data[pos].char
 }
 
 func (c Console) GetWidth() uint {

@@ -13,7 +13,11 @@ type Sprite struct {
 
 func (s Sprite) Draw(pos geom.Point, fg, bg rl.Color) {
 	if bg != ColourNC {
-		rl.DrawRectangleV(pos.Vector2(int(s.t.TileWidth), int(s.t.TileHeight)), rl.Vector2{X: float32(s.t.TileWidth), Y: float32(s.t.TileHeight)}, bg)
+		tileWidth := int(s.t.TileWidth)
+		tileHeight := int(s.t.TileHeight)
+		// @todo this draw call burns the cpu
+		// I think its because it gets called once for each tile on the grid
+		rl.DrawRectangle(int32(pos.X*tileWidth), int32(pos.Y*tileHeight), int32(tileWidth), int32(tileHeight), bg)
 	}
 
 	rl.DrawTextureRec(s.t.TxTiles, s.R, pos.Vector2(int(s.t.TileWidth), int(s.t.TileHeight)), fg)

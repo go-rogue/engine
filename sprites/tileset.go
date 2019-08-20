@@ -191,7 +191,6 @@ func (t Tileset) GetSpriteForChar(c uint) *Sprite {
 	if c > 256 {
 		c = 0
 	}
-
 	return t.sprites.AtIdx(t.asciiMap[c])
 }
 
