@@ -4,11 +4,23 @@ import "C"
 import (
 	"bytes"
 	"container/list"
-	"fmt"
 	rl "github.com/gen2brain/raylib-go/raylib"
 	"github.com/go-rogue/engine/geom"
+	"github.com/go-rogue/engine/sprites"
 	"strings"
 )
+
+type FrameStyle struct {
+	V, H, NE, SE, SW, NW uint
+}
+
+var SingleWallBorder = FrameStyle{
+	sprites.TCOD_CHAR_VLINE, sprites.TCOD_CHAR_HLINE, sprites.TCOD_CHAR_NE, sprites.TCOD_CHAR_SE, sprites.TCOD_CHAR_SW, sprites.TCOD_CHAR_NW,
+}
+
+var ZeroWallBorder = FrameStyle{
+	0, 0, 0, 0, 0, 0,
+}
 
 type CellLayer struct {
 	char   uint
@@ -121,7 +133,7 @@ type IConsole interface {
 	Print(pos geom.Point, str string)
 	//PrintRect(x, y, w, h int, fmts string, v ...interface{}) int
 	ClearRect(pos geom.Point, w, h uint)
-	PrintRectStyle(pos geom.Point, w, h uint, boxStyle BorderStyle, filled, clear bool)
+	PrintFrame(pos geom.Point, w, h uint, boxStyle FrameStyle, filled, clear bool)
 	//PrintRectEx(x, y, w, h int, flag BkgndFlag, alignment Alignment, fmts string, v ...interface{}) int
 	//HeightRect(x, y, w, h int, fmts string, v ...interface{}) int
 	//SetBackgroundFlag(flag BkgndFlag)
@@ -274,8 +286,6 @@ func (c *Console) Print(pos geom.Point, str string) {
 // Reset cells within the Rectangular area to default
 //
 func (c *Console) ClearRect(pos geom.Point, w, h uint) {
-	fmt.Println(pos, w, h)
-
 	for y := 0; y < int(h)-1; y++ {
 		for x := 0; x < int(w); x++ {
 			c.SetChar(' ', geom.Point{X: pos.X + x, Y: pos.Y + y})
@@ -283,7 +293,7 @@ func (c *Console) ClearRect(pos geom.Point, w, h uint) {
 	}
 }
 
-func (c *Console) PrintRectStyle(pos geom.Point, w, h uint, boxStyle BorderStyle, filled, clear bool) {
+func (c *Console) PrintFrame(pos geom.Point, w, h uint, style FrameStyle, filled, clear bool) {
 	if clear {
 		c.ClearRect(pos, w, h)
 	}
@@ -299,21 +309,21 @@ func (c *Console) PrintRectStyle(pos geom.Point, w, h uint, boxStyle BorderStyle
 
 	// Top/Bottom
 	for x := uint(pos.X + 1); x < uint(pos.X)+w; x++ {
-		c.PutCharEx(boxStyle.H, geom.Point{X: int(x), Y: pos.Y}, rl.White, rl.Black)
-		c.PutCharEx(boxStyle.H, geom.Point{X: int(x), Y: pos.Y + int(h-1)}, rl.White, rl.Black)
+		c.PutCharEx(style.H, geom.Point{X: int(x), Y: pos.Y}, rl.White, rl.Black)
+		c.PutCharEx(style.H, geom.Point{X: int(x), Y: pos.Y + int(h-1)}, rl.White, rl.Black)
 	}
 
 	// Left/Right
 	for y := uint(0); y < h-1; y++ {
-		c.PutCharEx(boxStyle.V, geom.Point{X: pos.X, Y: pos.Y + int(y)}, rl.White, rl.Black)
-		c.PutCharEx(boxStyle.V, geom.Point{X: pos.X + int(w-1), Y: pos.Y + int(y)}, rl.White, rl.Black)
+		c.PutCharEx(style.V, geom.Point{X: pos.X, Y: pos.Y + int(y)}, rl.White, rl.Black)
+		c.PutCharEx(style.V, geom.Point{X: pos.X + int(w-1), Y: pos.Y + int(y)}, rl.White, rl.Black)
 	}
 
 	// Corners
-	c.PutCharEx(boxStyle.NE, geom.Point{X: pos.X + int(w-1), Y: pos.Y}, rl.White, rl.Black)
-	c.PutCharEx(boxStyle.SE, geom.Point{X: pos.X + int(w-1), Y: pos.Y + int(h-1)}, rl.White, rl.Black)
-	c.PutCharEx(boxStyle.SW, geom.Point{X: pos.X, Y: pos.Y + int(h-1)}, rl.White, rl.Black)
-	c.PutCharEx(boxStyle.NW, geom.Point{X: pos.X, Y: pos.Y}, rl.White, rl.Black)
+	c.PutCharEx(style.NE, geom.Point{X: pos.X + int(w-1), Y: pos.Y}, rl.White, rl.Black)
+	c.PutCharEx(style.SE, geom.Point{X: pos.X + int(w-1), Y: pos.Y + int(h-1)}, rl.White, rl.Black)
+	c.PutCharEx(style.SW, geom.Point{X: pos.X, Y: pos.Y + int(h-1)}, rl.White, rl.Black)
+	c.PutCharEx(style.NW, geom.Point{X: pos.X, Y: pos.Y}, rl.White, rl.Black)
 }
 
 func (c Console) GetChar(pos geom.Point) uint {

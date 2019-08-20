@@ -3,25 +3,14 @@ package gui
 import (
 	rl "github.com/gen2brain/raylib-go/raylib"
 	"github.com/go-rogue/engine/geom"
-	"github.com/go-rogue/engine/sprites"
 )
-
-type BorderStyle struct {
-	V, H, NE, SE, SW, NW uint
-}
-
-var SingleWallBorder = BorderStyle{
-	sprites.TCOD_CHAR_VLINE, sprites.TCOD_CHAR_HLINE, sprites.TCOD_CHAR_NE, sprites.TCOD_CHAR_SE, sprites.TCOD_CHAR_SW, sprites.TCOD_CHAR_NW,
-}
-
-var ZeroWallBorder = BorderStyle{
-	0, 0, 0, 0, 0, 0,
-}
 
 type IWidget interface {
 	SetGui(*Gui)
 	GetGui() *Gui
 	Delete()
+	SetX(int)
+	SetY(int)
 	GetWidth() uint
 	SetWidth(width uint)
 	GetHeight() uint
@@ -75,6 +64,31 @@ type Widget struct {
 }
 
 type WidgetCallback func(w IWidget, userData interface{})
+
+func (w *Widget) init(pos geom.Point, width, height uint) {
+	w.pos = pos
+	w.w = width
+	w.h = height
+	w.mouseIn = false
+	w.mouseL = false
+	w.tip = ""
+	w.visible = true
+	w.disabled = false
+	w.back = rl.Color{40, 40, 120, 255}
+	w.fore = rl.Color{220, 220, 180, 255}
+	w.backFocus = rl.Color{70, 70, 130, 255}
+	w.foreFocus = rl.Color{255, 255, 255, 255}
+	w.backDisabled = rl.Color{40, 40, 120, 125}
+	w.foreDisabled = rl.Color{220, 220, 180, 125}
+}
+
+func (w *Widget) SetX(x int) {
+	w.pos.X = x
+}
+
+func (w *Widget) SetY(y int) {
+	w.pos.Y = y
+}
 
 func (w *Widget) SetGui(g *Gui) {
 	w.gui = g
@@ -286,21 +300,21 @@ func (w *Widget) expand(width, height uint) {
 	// abstract
 }
 
-func NewWidget(pos geom.Point, w, h uint) *Widget {
-	return &Widget{
-		pos:          pos,
-		w:            w,
-		h:            h,
-		mouseIn:      false,
-		mouseL:       false,
-		tip:          "",
-		visible:      true,
-		disabled:     false,
-		back:         rl.Color{40, 40, 120, 255},
-		fore:         rl.Color{220, 220, 180, 255},
-		backFocus:    rl.Color{70, 70, 130, 255},
-		foreFocus:    rl.Color{255, 255, 255, 255},
-		backDisabled: rl.Color{40, 40, 120, 125},
-		foreDisabled: rl.Color{220, 220, 180, 125},
-	}
-}
+//func NewWidget(pos geom.Point, w, h uint) *Widget {
+//	return &Widget{
+//		pos:          pos,
+//		w:            w,
+//		h:            h,
+//		mouseIn:      false,
+//		mouseL:       false,
+//		tip:          "",
+//		visible:      true,
+//		disabled:     false,
+//		back:         rl.Color{40, 40, 120, 255},
+//		fore:         rl.Color{220, 220, 180, 255},
+//		backFocus:    rl.Color{70, 70, 130, 255},
+//		foreFocus:    rl.Color{255, 255, 255, 255},
+//		backDisabled: rl.Color{40, 40, 120, 125},
+//		foreDisabled: rl.Color{220, 220, 180, 125},
+//	}
+//}

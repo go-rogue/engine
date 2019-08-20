@@ -19,23 +19,21 @@ type Button struct {
 	Widget
 	pressed     bool
 	label       string
-	BorderStyle BorderStyle
+	BorderStyle FrameStyle
 	callback    ButtonCallback
 	align       btnTextAlign
 }
 
-func (g *Gui) NewButton(pos geom.Point, width, height uint, label string, tip string, borderStyle BorderStyle, callback ButtonCallback, userData interface{}) *Button {
-	btn := &Button{
-		Widget:      *NewWidget(pos, width, height),
-		label:       label,
-		callback:    callback,
-		BorderStyle: borderStyle,
-		align:       BtnTextCenter,
-	}
+func (g *Gui) NewButton(pos geom.Point, width, height uint, label string, tip string, borderStyle FrameStyle, callback ButtonCallback, userData interface{}) *Button {
+	btn := &Button{}
+	btn.Widget.init(pos, width, height)
+	btn.label = label
+	btn.callback = callback
+	btn.BorderStyle = borderStyle
+	btn.align = BtnTextCenter
 	btn.tip = tip
 	btn.userData = userData
 	g.Register(btn)
-
 	return btn
 }
 
@@ -50,7 +48,7 @@ func (b *Button) Render(iB IWidget) {
 	con.SetDefaultBackground(back)
 
 	if b.w > 0 && b.h > 0 {
-		con.PrintRectStyle(b.pos, b.w, b.h, SingleWallBorder, true, true)
+		con.PrintFrame(b.pos, b.w, b.h, SingleWallBorder, true, true)
 	}
 	if b.label != "" {
 		var txtPos geom.Point
