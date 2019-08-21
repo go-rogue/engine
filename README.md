@@ -1,5 +1,18 @@
-# engine
-Go Rogue, Tile based game engine.
+<h1 align="center">GoRogue Engine</h1>
+<p align="center"><em>A tile based game engine modeled on libtcod</em></p>
+
+<p align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/go-rogue/engine.svg" alt="License"></a>
+  <a href="https://goreportcard.com/report/github.com/go-rogue/engine"><img src="https://goreportcard.com/badge/github.com/go-rogue/engine" alt="Go report card"></a>
+</p>
+
+## About
+
+TBC
+
+## Usage
+
+TBC
 
 ## Project Todo List
 
@@ -16,14 +29,14 @@ Each scene/game area can be considered as a _scene_. The stack can have scenes p
 
 Development of a Rendering Interface; the idea behind this is that the developer can choose the render driver, or develop one of their own. We will provide one for [raylib](https://www.raylib.com/) and potentially [gdamore/tcell](https://github.com/gdamore/tcell).
 
-* [ ] Render Base Interface
-  * [ ] Default Raylib Driver Implementation
-* [ ] Working Example of Raylib render driver
+* [x] Render Base Interface
+  * [x] Default Raylib Driver Implementation
+* [x] Working Example of Raylib render driver
 
 With the Raylib driver comes the concept of Spritesheets and Tilesets. This is because Raylib will be a "Virtual console":
 
-* [ ] Raylib Tileset
-* [ ] Raylib Spritesheet
+* [x] Raylib Tileset
+* [x] Raylib Spritesheet
 
 ### Maps & Map Generation
 
@@ -43,9 +56,9 @@ With the Raylib driver comes the concept of Spritesheets and Tilesets. This is b
 
 The GUI system will be based upon that available in [afolmert/libtcod-go](https://github.com/afolmert/libtcod-go/blob/master/tcod/gui.go) but modified to work with our render engine implementation.
 
-* [ ] GUI Base
-* [ ] GUI Widget Base
-  * [ ] Button Widget
+* [x] GUI Base
+* [x] GUI Widget Base
+  * [x] Button Widget
   * [ ] Radio Button Widget
   * [ ] Toggle Button Widget
   * [ ] Status Bar Widget
