@@ -20,20 +20,20 @@ func (v *VBox) init(pos geom.Point, padding uint) {
 }
 
 func (v *VBox) ComputeSize() {
-	cury := v.pos.Y
+	currentY := v.pos.Y
 	v.w = 0
 	for _, w := range v.content {
 		if w.IsVisible() {
 			w.SetX(v.pos.X)
-			w.SetY(cury)
+			w.SetY(currentY)
 			w.ComputeSize()
 			if w.GetWidth() > v.w {
 				v.w = w.GetWidth()
 			}
-			cury += int(w.GetHeight() + v.padding)
+			currentY += int(w.GetHeight() + v.padding)
 		}
 	}
-	v.h = uint(cury - v.pos.Y)
+	v.h = uint(currentY - v.pos.Y)
 
 	for _, w := range v.content {
 		if w.IsVisible() {
