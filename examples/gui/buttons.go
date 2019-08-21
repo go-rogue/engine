@@ -21,6 +21,7 @@ func main() {
 
 	// Initiate a Raylib windowed virtual Console for drawing to
 	console := gui.NewRaylibConsole(screenWidth, screenHeight, 60, "example: gui", font, false)
+	console.SetDebug(true)
 
 	iGui := gui.NewGui(console)
 
@@ -76,7 +77,6 @@ func main() {
 
 	for !rl.WindowShouldClose() {
 		rl.BeginDrawing()
-		rl.ClearBackground(console.GetDefaultBackground())
 
 		dt = rl.GetFrameTime()
 		gui.UpdateMouseStatus()
