@@ -34,6 +34,8 @@ type Cell struct {
 
 type CellMap map[geom.Point]*Cell
 
+type DirtyMap map[geom.Point]bool
+
 type printCommand struct {
 	fg rl.Color
 	bg rl.Color
@@ -117,6 +119,8 @@ func newPrintVM(initial printCommand) *printVM {
 
 type IConsole interface {
 	GetData() CellMap
+	GetDirty() DirtyMap
+	ClearDirty()
 	GetCellAtPos(pos geom.Point) *Cell
 	GetDefaultBackground() rl.Color
 	GetDefaultForeground() rl.Color
@@ -154,18 +158,33 @@ type IConsole interface {
 type Console struct {
 	width, height        uint
 	data                 CellMap
+	dirty                DirtyMap
 	defaultBg, defaultFg rl.Color
 }
 
 // Initiates the CellMap
 func (c *Console) init() {
-	cMap := make(CellMap)
-	c.data = cMap
+	c.data = make(CellMap)
+	c.dirty = make(map[geom.Point]bool)
 
 	for cY := 0; cY < int(c.height); cY++ {
 		for cX := 0; cX < int(c.width); cX++ {
 			c.PutChar(' ', geom.Point{X: cX, Y: cY})
 		}
+	}
+}
+
+func (c Console) GetDirty() DirtyMap {
+	return c.dirty
+}
+
+func (c *Console) SetDirty(pos geom.Point) {
+	c.dirty[pos] = true
+}
+
+func (c *Console) ClearDirty() {
+	for k := range c.dirty {
+		delete(c.dirty, k)
 	}
 }
 
@@ -197,12 +216,23 @@ func (c *Console) SetDefaultBackground(colour rl.Color) {
 // Clear the console data
 //
 func (c *Console) Clear() {
-	c.init()
+	c.ClearDirty()
+
+	for k := range c.data {
+		delete(c.data, k)
+	}
+
+	for cY := 0; cY < int(c.height); cY++ {
+		for cX := 0; cX < int(c.width); cX++ {
+			c.PutChar(' ', geom.Point{X: cX, Y: cY})
+		}
+	}
 }
 
 // This will result in a panic if pos is out of bounds
 func (c *Console) SetChar(r uint, pos geom.Point) {
 	c.data[pos].char = r
+	c.SetDirty(pos)
 }
 
 // This will result in a panic if pos is out of bounds
@@ -218,21 +248,25 @@ func (c Console) GetCharForeground(pos geom.Point) rl.Color {
 // This will result in a panic if pos is out of bounds
 func (c *Console) SetCharBackground(pos geom.Point, colour rl.Color) {
 	c.data[pos].bg = colour
+	c.SetDirty(pos)
 }
 
 // This will result in a panic if pos is out of bounds
 func (c *Console) SetCharForeground(pos geom.Point, colour rl.Color) {
 	c.data[pos].fg = colour
+	c.SetDirty(pos)
 }
 
 // This will result in a panic if p is out of bounds
 func (c *Console) PutChar(r uint, p geom.Point) {
 	c.data[p] = &Cell{char: r, fg: c.defaultFg, bg: sprites.ColourNC}
+	c.SetDirty(p)
 }
 
 // This will result in a panic if p is out of bounds
 func (c *Console) PutCharEx(r uint, p geom.Point, fg, bg rl.Color) {
 	c.data[p] = &Cell{char: r, fg: fg, bg: bg}
+	c.SetDirty(p)
 }
 
 //
@@ -287,7 +321,7 @@ func (c *Console) Print(pos geom.Point, str string) {
 			}
 		} else {
 			fg, bg := vm.Peek().AsFgBg()
-			c.data[geom.Point{X: pos.X + i + xOff, Y: pos.Y}] = &Cell{char: uint(r), bg: bg, fg: fg}
+			c.PutCharEx(uint(r), geom.Point{X: pos.X + i + xOff, Y: pos.Y}, fg, bg)
 		}
 	}
 }
