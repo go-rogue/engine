@@ -33,9 +33,12 @@ func main() {
 	}, 0))
 
 	vBox.AddWidget(iGui.NewButton(geom.Point{0, 0}, 21, 7, "Click Me", "", gui.SingleWallBorder, func(w *gui.Button, userData interface{}) {
-		w.SetUserData(w.GetUserData().(int) + 1)
-		w.SetLabel(fmt.Sprintf("Clicked %d", w.GetUserData().(int)))
-		vBox.SetX(w.GetUserData().(int))
+		x := w.GetUserData().(int)
+		if uint(x)+w.GetWidth() <= console.GetWidth() {
+			w.SetUserData(w.GetUserData().(int) + 1)
+			vBox.SetX(x)
+		}
+		w.SetLabel(fmt.Sprintf("Clicked %d", x))
 	}, 0))
 
 	//console.PutCharEx('a', geom.Point{1, 1}, rl.Red, rl.Color{})
