@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"fmt"
 	rl "github.com/gen2brain/raylib-go/raylib"
 	"github.com/go-rogue/engine/geom"
 	"github.com/go-rogue/engine/sprites"
@@ -10,6 +11,7 @@ import (
 type RaylibConsole struct {
 	Console
 	tileset *sprites.Tileset
+	debug   bool
 }
 
 func PositionFromVec2(vector2 rl.Vector2) geom.Point {
@@ -67,12 +69,23 @@ func NewRaylibConsole(w, h uint, fps uint, title string, fontProps sprites.TileS
 }
 
 func (c RaylibConsole) Draw(dt float32) {
+	rl.ClearBackground(c.GetDefaultBackground())
+
+	if c.debug {
+		c.Print(geom.Point{0, 0}, fmt.Sprintf("dt: %f", dt))
+		c.Print(geom.Point{0, 1}, fmt.Sprintf("fps: %d", int(rl.GetFPS())))
+	}
+
 	for pos, _ := range c.Console.GetDirty() {
 		cell := c.GetCellAtPos(pos)
 		c.tileset.GetSpriteForChar(cell.char).Draw(pos, cell.fg, cell.bg)
 	}
 
 	c.Console.ClearDirty()
+}
+
+func (c *RaylibConsole) SetDebug(b bool) {
+	c.debug = b
 }
 
 func (c RaylibConsole) Unload() {
