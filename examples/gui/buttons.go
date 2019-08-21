@@ -14,7 +14,7 @@ type ButtonScene struct {
 }
 
 func NewButtonScene(gui *gui.Gui) *ButtonScene {
-	return &ButtonScene{Scene: scenes.Scene{}, gui: gui}
+	return &ButtonScene{Scene: scenes.Scene{Name: "VBox Button Example"}, gui: gui}
 }
 
 func (b *ButtonScene) Pushed(director *scenes.Director) error {

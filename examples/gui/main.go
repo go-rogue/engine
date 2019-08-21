@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	rl "github.com/gen2brain/raylib-go/raylib"
 	"github.com/go-rogue/engine/gui"
 	"github.com/go-rogue/engine/scenes"
@@ -25,7 +26,23 @@ func main() {
 
 	director := scenes.NewDirector(NewButtonScene(iGui))
 
+	updateWindowTitle := false
+
 	for !rl.WindowShouldClose() {
+		if rl.IsKeyPressed(rl.KeyO) {
+			director.ChangeState(NewSkeletonScene(iGui))
+			updateWindowTitle = true
+
+		} else if rl.IsKeyPressed(rl.KeyP) {
+			director.ChangeState(NewButtonScene(iGui))
+			updateWindowTitle = true
+		}
+
+		if updateWindowTitle {
+			rl.SetWindowTitle(fmt.Sprintf("example: %s", director.PeekState().GetName()))
+			updateWindowTitle = false
+		}
+
 		rl.BeginDrawing()
 
 		dt = rl.GetFrameTime()
