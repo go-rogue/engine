@@ -44,6 +44,13 @@ func (c *Container) Clear() {
 	c.content = []IWidget{}
 }
 
+func (c *Container) Delete() {
+	for _, w := range c.content {
+		c.gui.Unregister(w)
+	}
+	c.gui.Unregister(c)
+}
+
 func (c *Container) Update(iW IWidget) {
 	c.Widget.Update(iW)
 	for _, w := range c.content {

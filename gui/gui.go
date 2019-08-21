@@ -66,6 +66,10 @@ func (g *Gui) SetConsole(console IConsole) {
 	g.con = console
 }
 
+func (g *Gui) GetConsole() IConsole {
+	return g.con
+}
+
 //
 // Set the focused Widget for mouse input
 //

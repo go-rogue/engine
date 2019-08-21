@@ -22,8 +22,8 @@ Here you will see what is left to complete before this engine is ready for shari
 
 Each scene/game area can be considered as a _scene_. The stack can have scenes pushed on to it and in doing so the top most scene is the one executed during the game loop with all else effectively "paused."
 
-* [ ] State Base
-* [ ] Working Example of State system
+* [x] State Base
+* [x] Working Example of State system
 
 ### Scene Rendering / User Input
 
