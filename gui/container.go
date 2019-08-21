@@ -46,7 +46,7 @@ func (c *Container) Clear() {
 
 func (c *Container) Delete() {
 	for _, w := range c.content {
-		c.gui.Unregister(w)
+		c.RemoveWidget(w)
 	}
 	c.gui.Unregister(c)
 }
