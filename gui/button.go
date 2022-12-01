@@ -39,6 +39,10 @@ func (g *Gui) NewButton(pos geom.Point, width, height uint, label string, tip st
 	return btn
 }
 
+func (g *Gui) NewBasicButton(pos geom.Point, width, height uint, label string, borderStyle FrameStyle) *Button {
+	return g.NewButton(pos, width, height, label, "", borderStyle, func(w *Button, userData interface{}) {}, nil)
+}
+
 func (b *Button) SetTextAlign(a btnTextAlign) {
 	b.align = a
 }

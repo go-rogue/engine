@@ -34,17 +34,22 @@ type RadioButton struct {
 	callback RadioButtonCallback
 }
 
-func (g *Gui) NewRadioButton(pos geom.Point, width, height uint, label string, tip string, callback RadioButtonCallback, userData interface{}) *RadioButton {
-	rBtn := &RadioButton{}
-	rBtn.Widget.init(pos, width, height)
-	rBtn.label = label
-	rBtn.tip = tip
-	rBtn.callback = callback
-	rBtn.userData = userData
-	rBtn.align = BtnTextLeft
-	rBtn.labelXPadding = 4
-	g.Register(rBtn)
-	return rBtn
+func (g *Gui) NewRadioButton(pos geom.Point, width, height uint, label string, tip string, borderStyle FrameStyle, callback RadioButtonCallback, userData interface{}) *RadioButton {
+	btn := &RadioButton{}
+	btn.Widget.init(pos, width, height)
+	btn.label = label
+	btn.tip = tip
+	btn.callback = callback
+	btn.userData = userData
+	btn.BorderStyle = borderStyle
+	btn.align = BtnTextLeft
+	btn.labelXPadding = 4
+	g.Register(btn)
+	return btn
+}
+
+func (g *Gui) NewBasicRadioButton(pos geom.Point, width, height uint, label string, borderStyle FrameStyle) *RadioButton {
+	return g.NewRadioButton(pos, width, height, label, "", borderStyle, func(w *RadioButton, userData interface{}) {}, nil)
 }
 
 func (b *RadioButton) Select() {
