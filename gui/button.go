@@ -17,11 +17,12 @@ const (
 
 type Button struct {
 	Widget
-	pressed     bool
-	label       string
-	BorderStyle FrameStyle
-	callback    ButtonCallback
-	align       btnTextAlign
+	pressed       bool
+	label         string
+	labelXPadding int
+	BorderStyle   FrameStyle
+	callback      ButtonCallback
+	align         btnTextAlign
 }
 
 func (g *Gui) NewButton(pos geom.Point, width, height uint, label string, tip string, borderStyle FrameStyle, callback ButtonCallback, userData interface{}) *Button {
@@ -33,6 +34,7 @@ func (g *Gui) NewButton(pos geom.Point, width, height uint, label string, tip st
 	btn.align = BtnTextCenter
 	btn.tip = tip
 	btn.userData = userData
+	btn.labelXPadding = 2
 	g.Register(btn)
 	return btn
 }
@@ -48,22 +50,25 @@ func (b *Button) Render(iB IWidget) {
 	con.SetDefaultBackground(back)
 
 	if b.w > 0 && b.h > 0 {
-		con.PrintFrame(b.pos, b.w, b.h, SingleWallBorder, true, true)
+		con.PrintFrame(b.pos, b.w, b.h, b.BorderStyle, true, true)
 	}
 	if b.label != "" {
-		var txtPos geom.Point
-		padX := 2
-
-		if b.align == BtnTextLeft {
-			txtPos = geom.Point{b.pos.X + int(padX), b.pos.Y + int(b.h/2)}
-		} else if b.align == BtnTextCenter {
-			txtPos = geom.Point{b.pos.X + int(int(b.w/2)-utf8.RuneCountInString(b.label)/2), b.pos.Y + int(b.h/2)}
-		} else if b.align == BtnTextRight {
-			txtPos = geom.Point{b.pos.X + int(int(b.w)-utf8.RuneCountInString(b.label)-int(padX)), b.pos.Y + int(b.h/2)}
-		}
-
-		con.Print(txtPos, b.label)
+		con.Print(b.GetLabelPos(b.label), b.label)
 	}
+}
+
+func (b Button) GetLabelPos(label string) geom.Point {
+	var txtPos geom.Point
+
+	if b.align == BtnTextLeft {
+		txtPos = geom.Point{X: b.pos.X + b.labelXPadding, Y: b.pos.Y + int(b.h/2)}
+	} else if b.align == BtnTextCenter {
+		txtPos = geom.Point{X: b.pos.X + int(int(b.w/2)-utf8.RuneCountInString(label)/2), Y: b.pos.Y + int(b.h/2)}
+	} else if b.align == BtnTextRight {
+		txtPos = geom.Point{X: b.pos.X + int(int(b.w)-utf8.RuneCountInString(label)-b.labelXPadding), Y: b.pos.Y + int(b.h/2)}
+	}
+
+	return txtPos
 }
 
 func (b *Button) SetLabel(newLabel string) {

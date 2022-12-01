@@ -7,7 +7,7 @@ type Gui struct {
 	elapsed       float32
 	con           IConsole
 	widgetVector  []IWidget
-	//rbs           *RadioButtonStatic
+	rbs           *RadioButtonGroups
 	//tbs           *TextBoxStatic
 }
 
@@ -105,5 +105,6 @@ func NewGui(console IConsole) *Gui {
 	return &Gui{
 		con:          console,
 		widgetVector: []IWidget{},
+		rbs:          NewRadioButtonGroups(),
 	}
 }
