@@ -60,7 +60,7 @@ The GUI system will be based upon that available in [afolmert/libtcod-go](https:
 * [x] GUI Widget Base
   * [x] Button Widget
   * [x] Radio Button Widget
-  * [ ] Toggle Button Widget
+  * [x] Toggle Button Widget
   * [ ] Status Bar Widget
   * [x] Container Widget
     * [x] Vertical Container Widget
@@ -70,9 +70,13 @@ The GUI system will be based upon that available in [afolmert/libtcod-go](https:
   * [ ] Label Widget
   * [ ] TextBox Widget
   * [ ] Slider Widget
+* [ ] Input Handling
+  * [ ] Keyboard Events
+  * [ ] Mouse Events
 * [ ] Colour Themes
 * [ ] Working Example for all above
 
 ## Research
 - https://tomassedovic.github.io/roguelike-tutorial/index.html
 - https://github.com/afolmert/libtcod-go
+- [Pataro: A Roguelike library built on top of libtcod](https://github.com/SuperFola/pataro)
