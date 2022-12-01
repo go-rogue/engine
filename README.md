@@ -59,10 +59,12 @@ The GUI system will be based upon that available in [afolmert/libtcod-go](https:
 * [x] GUI Base
 * [x] GUI Widget Base
   * [x] Button Widget
-  * [ ] Radio Button Widget
+  * [x] Radio Button Widget
   * [ ] Toggle Button Widget
   * [ ] Status Bar Widget
-  * [ ] Container Widget
+  * [x] Container Widget
+    * [x] Vertical Container Widget
+    * [x] Horizontal Container Widget
   * [ ] Toolbar Widget
   * [ ] Toolbar Separator Widget
   * [ ] Label Widget
@@ -70,3 +72,7 @@ The GUI system will be based upon that available in [afolmert/libtcod-go](https:
   * [ ] Slider Widget
 * [ ] Colour Themes
 * [ ] Working Example for all above
+
+## Research
+- https://tomassedovic.github.io/roguelike-tutorial/index.html
+- https://github.com/afolmert/libtcod-go
