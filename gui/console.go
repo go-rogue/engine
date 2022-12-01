@@ -229,41 +229,41 @@ func (c *Console) Clear() {
 	}
 }
 
-// This will result in a panic if pos is out of bounds
+// TODO This will result in a panic if pos is out of bounds
 func (c *Console) SetChar(r uint, pos geom.Point) {
 	c.data[pos].char = r
 	c.SetDirty(pos)
 }
 
-// This will result in a panic if pos is out of bounds
+// TODO This will result in a panic if pos is out of bounds
 func (c Console) GetCharBackground(pos geom.Point) rl.Color {
 	return c.data[pos].bg
 }
 
-// This will result in a panic if pos is out of bounds
+// TODO This will result in a panic if pos is out of bounds
 func (c Console) GetCharForeground(pos geom.Point) rl.Color {
 	return c.data[pos].fg
 }
 
-// This will result in a panic if pos is out of bounds
+// TODO This will result in a panic if pos is out of bounds
 func (c *Console) SetCharBackground(pos geom.Point, colour rl.Color) {
 	c.data[pos].bg = colour
 	c.SetDirty(pos)
 }
 
-// This will result in a panic if pos is out of bounds
+// TODO This will result in a panic if pos is out of bounds
 func (c *Console) SetCharForeground(pos geom.Point, colour rl.Color) {
 	c.data[pos].fg = colour
 	c.SetDirty(pos)
 }
 
-// This will result in a panic if p is out of bounds
+// TODO This will result in a panic if p is out of bounds
 func (c *Console) PutChar(r uint, p geom.Point) {
 	c.data[p] = &Cell{char: r, fg: c.defaultFg, bg: sprites.ColourNC}
 	c.SetDirty(p)
 }
 
-// This will result in a panic if p is out of bounds
+// TODO This will result in a panic if p is out of bounds
 func (c *Console) PutCharEx(r uint, p geom.Point, fg, bg rl.Color) {
 	c.data[p] = &Cell{char: r, fg: fg, bg: bg}
 	c.SetDirty(p)

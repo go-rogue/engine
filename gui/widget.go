@@ -5,6 +5,8 @@ import (
 	"github.com/go-rogue/engine/geom"
 )
 
+// IWidget is an interface based upon the libtcod widget toolkit. It's partially implemented by the base Widget struct,
+// which itself is extended by the GUI components such as Button and VBox.
 type IWidget interface {
 	SetGui(*Gui)
 	GetGui() *Gui
@@ -45,6 +47,8 @@ type IWidget interface {
 	expand(width, height uint)
 }
 
+// Widget is the base struct extended by all GUI components. It implements all but eight of the methods
+// defined by IWidget leaving them as "abstract" to be extended by GUI components.
 type Widget struct {
 	pos          geom.Point
 	w, h         uint
@@ -63,6 +67,8 @@ type Widget struct {
 	gui          *Gui
 }
 
+// WidgetCallback I don't remember what this was for.
+// TODO, figure out what WidgetCallback is for.
 type WidgetCallback func(w IWidget, userData interface{})
 
 func (w *Widget) init(pos geom.Point, width, height uint) {
@@ -208,14 +214,12 @@ func (w *Widget) GetCurrentColors() (fore, back rl.Color) {
 }
 
 //
-// This gets called by the Gui and updates each widgets mouse meta
-// w is the base Widget struct while iW is any of the inheriting
-// widgets e.g Button.
+// Update gets called by Gui in order to update the mouse meta for each Widget. In this functions scope `w` is the base
+// Widget struct while iW is any of the inheriting widgets for example Button.
 //
 func (w *Widget) Update(iW IWidget) {
 
-	// If the console in use does not support the mouse then no point in updating
-	// from it.
+	// If the console in use does not support the mouse then no point in updating from it.
 	if !w.gui.mouse.Supported {
 		return
 	}

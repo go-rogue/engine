@@ -2,6 +2,7 @@ package gui
 
 import "github.com/go-rogue/engine/geom"
 
+// VBox is an extension to Container that ensures Widget's added to it are presented in a column.
 type VBox struct {
 	Container
 	padding uint
@@ -19,6 +20,8 @@ func (v *VBox) init(pos geom.Point, padding uint) {
 	v.padding = padding
 }
 
+// ComputeSize calculates the VBox dimensions and updates each of its child Widget's position
+// to be stacked within those bounds.
 func (v *VBox) ComputeSize() {
 	currentY := v.pos.Y
 	v.w = 0
