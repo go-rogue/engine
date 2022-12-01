@@ -37,6 +37,44 @@ func (b *ButtonScene) Pushed(director *scenes.Director) error {
 
 	b.widgets = append(b.widgets, vBox)
 
+	vBox2 := b.gui.NewVBox(geom.Point{2, 30}, 0)
+
+	rBtn1 := b.gui.NewBasicRadioButton(geom.Point{0, 0}, 21, 7, "Group 1.0", gui.SingleWallBorder)
+	rBtn2 := b.gui.NewBasicRadioButton(geom.Point{0, 0}, 21, 7, "Group 1.1", gui.SingleWallBorder)
+
+	rBtn1.SetGroup(0)
+	rBtn2.SetGroup(0)
+
+	vBox2.AddWidget(rBtn1)
+	vBox2.AddWidget(rBtn2)
+	b.widgets = append(b.widgets, rBtn1)
+	b.widgets = append(b.widgets, rBtn2)
+
+	hBox := b.gui.NewHBox(geom.Point{2, 20}, 0)
+
+	rBtn3 := b.gui.NewBasicRadioButton(geom.Point{0, 0}, 21, 7, "Group 2.0", gui.SingleWallBorder)
+	rBtn4 := b.gui.NewBasicRadioButton(geom.Point{0, 0}, 21, 7, "Group 2.1", gui.SingleWallBorder)
+	rBtn5 := b.gui.NewBasicRadioButton(geom.Point{0, 0}, 21, 7, "Group 2.2", gui.SingleWallBorder)
+
+	rBtn3.SetGroup(1)
+	rBtn4.SetGroup(1)
+	rBtn5.SetGroup(1)
+
+	hBox.AddWidget(rBtn3)
+	hBox.AddWidget(rBtn4)
+	hBox.AddWidget(rBtn5)
+
+	hBox2 := b.gui.NewHBox(geom.Point{23, 37}, 0)
+	tBtn := b.gui.NewBasicToggleButton(geom.Point{0, 0}, 7, 7, "", gui.SingleWallBorder)
+	tBtn2 := b.gui.NewBasicToggleButton(geom.Point{0, 0}, 21, 7, "Toggle Btns", gui.SingleWallBorder)
+	hBox2.AddWidget(tBtn)
+	hBox2.AddWidget(tBtn2)
+
+	b.widgets = append(b.widgets, rBtn3)
+	b.widgets = append(b.widgets, rBtn4)
+	b.widgets = append(b.widgets, rBtn5)
+	b.widgets = append(b.widgets, tBtn)
+
 	return nil
 }
 
