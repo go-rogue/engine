@@ -1,6 +1,9 @@
 package gui
 
-import "github.com/go-rogue/engine/geom"
+import (
+	"github.com/go-rogue/engine/geom"
+	"github.com/go-rogue/engine/sprites"
+)
 
 type RadioButtonGroups struct {
 	defaultGroup uint
@@ -76,14 +79,15 @@ func (b *RadioButton) Render(iB IWidget) {
 
 	b.Button.Render(iB)
 
+	var labelPos = b.GetLabelPos("> " + b.label)
+	// Radio Buttons have an X padding of 4 cells, this gives one cell padding each side of the selected
+	// marker. Here we pull the x pos back two cells so we have a space between the selected marker and
+	// the label.
+	labelPos.X -= 2
 	if b.IsSelected() {
-		var labelPos = b.GetLabelPos("> " + b.label)
-
-		// Radio Buttons have an X padding of 4 cells, this gives one cell padding each side of the selected
-		// marker. Here we pull the x pos back two cells so we have a space between the selected marker and
-		// the label.
-		labelPos.X -= 2
-		con.PutCharEx('>', labelPos, fore, back)
+		con.PutCharEx(sprites.TCOD_CHAR_RADIO_SET, labelPos, fore, back)
+	} else {
+		con.PutCharEx(sprites.TCOD_CHAR_RADIO_UNSET, labelPos, fore, back)
 	}
 }
 
