@@ -10,16 +10,60 @@ import (
 	"strings"
 )
 
+// FrameStyle defines a Widget's border. Those without a border will have it set to ZeroWallBorder.
 type FrameStyle struct {
 	V, H, NE, SE, SW, NW uint
 }
 
+// SingleWallBorder displays a single line border
 var SingleWallBorder = FrameStyle{
 	sprites.TCOD_CHAR_VLINE, sprites.TCOD_CHAR_HLINE, sprites.TCOD_CHAR_NE, sprites.TCOD_CHAR_SE, sprites.TCOD_CHAR_SW, sprites.TCOD_CHAR_NW,
 }
 
+// ZeroWallBorder displays no border
 var ZeroWallBorder = FrameStyle{
 	0, 0, 0, 0, 0, 0,
+}
+
+// IsZeroWallBorder is used to determine if a Widget's border should be drawn
+func (f FrameStyle) IsZeroWallBorder() bool {
+	return f.V == 0 && f.H == 0 && f.NE == 0 && f.SE == 0 && f.SW == 0 && f.NW == 0
+}
+
+// FrameTitle is complementary to FrameStyle, both are used by IConsole.PrintFrame
+type FrameTitle struct {
+	text      string
+	alignment TextAlignment
+}
+
+var ZeroFrameTitle = FrameTitle{
+	text:      "",
+	alignment: AlignTextCenter,
+}
+
+func (f FrameTitle) IsVisible() bool {
+	return f.text != ""
+}
+
+func (f FrameTitle) Position(homePos geom.Point, width uint) geom.Point {
+	if f.alignment == AlignTextLeft {
+		return geom.Point{
+			X: homePos.X,
+			Y: homePos.Y,
+		}
+	}
+
+	if f.alignment == AlignTextRight {
+		return geom.Point{
+			X: homePos.X + int(width) - utf8.RuneCountInString(f.text),
+			Y: homePos.Y,
+		}
+	}
+
+	return geom.Point{
+		X: homePos.X + int(width/2) - utf8.RuneCountInString(f.text)/2,
+		Y: homePos.Y,
+	}
 }
 
 type CellLayer struct {
