@@ -20,17 +20,15 @@ type Button struct {
 	pressed       bool
 	label         string
 	labelXPadding int
-	BorderStyle   FrameStyle
 	callback      ButtonCallback
 	align         btnTextAlign
 }
 
 func (g *Gui) NewButton(pos geom.Point, width, height uint, label string, tip string, borderStyle FrameStyle, callback ButtonCallback, userData interface{}) *Button {
 	btn := &Button{}
-	btn.Widget.init(pos, width, height)
+	btn.Widget.init(pos, width, height, borderStyle)
 	btn.label = label
 	btn.callback = callback
-	btn.BorderStyle = borderStyle
 	btn.align = BtnTextCenter
 	btn.tip = tip
 	btn.userData = userData
@@ -54,7 +52,7 @@ func (b *Button) Render(iB IWidget) {
 	con.SetDefaultBackground(back)
 
 	if b.w > 0 && b.h > 0 {
-		con.PrintFrame(b.pos, b.w, b.h, b.BorderStyle, true, true)
+		con.PrintFrame(b.pos, b.w, b.h, b.borderStyle, ZeroFrameTitle, true, true)
 	}
 	if b.label != "" {
 		con.Print(b.GetLabelPos(b.label), b.label)
@@ -88,6 +86,7 @@ func (b *Button) IsPressed() bool {
 }
 
 func (b *Button) ComputeSize() {
+	// TODO... is this used?
 	// b.w = uint(utf8.RuneCountInString(b.label)) + 4
 }
 

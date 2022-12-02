@@ -39,12 +39,11 @@ type RadioButton struct {
 
 func (g *Gui) NewRadioButton(pos geom.Point, width, height uint, label string, tip string, borderStyle FrameStyle, callback RadioButtonCallback, userData interface{}) *RadioButton {
 	btn := &RadioButton{}
-	btn.Widget.init(pos, width, height)
+	btn.Widget.init(pos, width, height, borderStyle)
 	btn.label = label
 	btn.tip = tip
 	btn.callback = callback
 	btn.userData = userData
-	btn.BorderStyle = borderStyle
 	btn.align = BtnTextLeft
 	btn.labelXPadding = 4
 	g.Register(btn)

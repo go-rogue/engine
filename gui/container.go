@@ -18,7 +18,7 @@ func (g *Gui) NewContainer(pos geom.Point, width, height uint) *Container {
 }
 
 func (c *Container) init(pos geom.Point, width, height uint) {
-	c.Widget.init(pos, width, height)
+	c.Widget.init(pos, width, height, ZeroWallBorder)
 	c.content = []IWidget{}
 }
 
@@ -45,6 +45,8 @@ func (c *Container) Render(iW IWidget) {
 	//		c.gui.con.PutCharEx(' ', geom.Point{X:int(x), Y:int(y)}, rl.Color{255, 0, 0, 255}, rl.Color{255, 0, 0, 255})
 	//	}
 	//}
+
+	// TODO: Should containers be Frame aware? For example, should they, like Buttons be able to draw a frame and a title?
 
 	for _, w := range c.content {
 		if w.IsVisible() {

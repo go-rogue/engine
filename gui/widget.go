@@ -39,6 +39,8 @@ type IWidget interface {
 	GetDefaultBackground() (col, colFocus rl.Color)
 	GetDefaultForeground() (col, colFocus rl.Color)
 	GetCurrentColors() (fore, back rl.Color)
+	GetBorderStyle() FrameStyle
+	SetBorderStyle(f FrameStyle)
 	onMouseIn()
 	onMouseOut()
 	onButtonPress()
@@ -65,13 +67,10 @@ type Widget struct {
 	backDisabled rl.Color
 	foreDisabled rl.Color
 	gui          *Gui
+	borderStyle  FrameStyle
 }
 
-// WidgetCallback I don't remember what this was for.
-// TODO, figure out what WidgetCallback is for.
-type WidgetCallback func(w IWidget, userData interface{})
-
-func (w *Widget) init(pos geom.Point, width, height uint) {
+func (w *Widget) init(pos geom.Point, width, height uint, border FrameStyle) {
 	w.pos = pos
 	w.w = width
 	w.h = height
@@ -86,6 +85,7 @@ func (w *Widget) init(pos geom.Point, width, height uint) {
 	w.foreFocus = rl.Color{255, 255, 255, 255}
 	w.backDisabled = rl.Color{40, 40, 120, 125}
 	w.foreDisabled = rl.Color{220, 220, 180, 125}
+	w.borderStyle = border
 }
 
 func (w *Widget) SetX(x int) {
@@ -265,7 +265,14 @@ func (w *Widget) Update(iW IWidget) {
 			iW.onButtonClick()
 		}
 	}
+}
 
+func (w Widget) GetBorderStyle() FrameStyle {
+	return w.borderStyle
+}
+
+func (w *Widget) SetBorderStyle(f FrameStyle) {
+	w.borderStyle = f
 }
 
 //

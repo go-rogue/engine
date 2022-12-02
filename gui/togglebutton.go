@@ -16,10 +16,9 @@ type ToggleButton struct {
 
 func (g *Gui) NewToggleButton(pos geom.Point, width, height uint, label string, tip string, borderStyle FrameStyle, callback ToggleButtonCallback, userData interface{}) *ToggleButton {
 	btn := &ToggleButton{}
-	btn.Widget.init(pos, width, height)
+	btn.Widget.init(pos, width, height, borderStyle)
 	btn.label = label
 	btn.callback = callback
-	btn.BorderStyle = borderStyle
 	btn.align = BtnTextCenter
 	btn.tip = tip
 	btn.userData = userData
