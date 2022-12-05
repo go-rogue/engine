@@ -2,6 +2,7 @@ package gui
 
 import (
 	"fmt"
+	rl "github.com/gen2brain/raylib-go/raylib"
 	"github.com/go-rogue/engine/geom"
 	"github.com/go-rogue/engine/sprites"
 )
@@ -17,13 +18,16 @@ type ToggleButton struct {
 func (g *Gui) NewToggleButton(pos geom.Point, width, height uint, label string, tip string, borderStyle FrameStyle, callback ToggleButtonCallback, userData interface{}) *ToggleButton {
 	btn := &ToggleButton{}
 	btn.Widget.init(pos, width, height, borderStyle)
-	btn.label = label
+	btn.label = FrameTitle{
+		text:               label,
+		alignment:          AlignTextCenter,
+		verticallyCentered: true,
+		padding:            rl.NewVector2(2, 0),
+	}
 	btn.callback = callback
-	btn.align = BtnTextCenter
 	btn.tip = tip
 	btn.userData = userData
 	btn.pressed = false
-	btn.labelXPadding = 2
 
 	g.Register(btn)
 	return btn
@@ -42,6 +46,10 @@ func (b *ToggleButton) SetToggled(value bool) {
 }
 
 func (b *ToggleButton) Render(iB IWidget) {
+	var labelPos = b.label.Position(b.pos, b.w, b.h)
+	var label string
+	var icon rune
+
 	con := b.gui.con
 	fore, back := iB.GetCurrentColors()
 	con.SetDefaultForeground(fore)
@@ -49,20 +57,19 @@ func (b *ToggleButton) Render(iB IWidget) {
 
 	b.Button.Render(iB)
 
-	var icon rune
 	if b.toggled {
 		icon = sprites.TCOD_CHAR_CHECKBOX_SET
 	} else {
 		icon = sprites.TCOD_CHAR_CHECKBOX_UNSET
 	}
 
-	if b.label == "" {
-		label := fmt.Sprintf("%c", icon)
-		con.Print(b.GetLabelPos(label), label)
+	if b.label.IsVisible() {
+		label = fmt.Sprintf("%c %s", icon, b.label.text)
 	} else {
-		label := fmt.Sprintf("%c %s", icon, b.label)
-		con.Print(b.GetLabelPos(label), label)
+		label = fmt.Sprintf("%c", icon)
 	}
+
+	con.Print(labelPos, label)
 }
 
 func (b *ToggleButton) onButtonClick() {

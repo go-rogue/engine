@@ -8,6 +8,15 @@ import (
 	"github.com/go-rogue/engine/geom"
 	"github.com/go-rogue/engine/sprites"
 	"strings"
+	"unicode/utf8"
+)
+
+type TextAlignment uint
+
+const (
+	AlignTextLeft TextAlignment = iota
+	AlignTextCenter
+	AlignTextRight
 )
 
 // FrameStyle defines a Widget's border. Those without a border will have it set to ZeroWallBorder.
@@ -32,37 +41,41 @@ func (f FrameStyle) IsZeroWallBorder() bool {
 
 // FrameTitle is complementary to FrameStyle, both are used by IConsole.PrintFrame
 type FrameTitle struct {
-	text      string
-	alignment TextAlignment
+	text               string
+	alignment          TextAlignment
+	verticallyCentered bool
+	padding            rl.Vector2
 }
 
 var ZeroFrameTitle = FrameTitle{
-	text:      "",
-	alignment: AlignTextCenter,
+	text:               "",
+	alignment:          AlignTextCenter,
+	verticallyCentered: false,
+	padding:            rl.NewVector2(0, 0),
 }
 
 func (f FrameTitle) IsVisible() bool {
 	return f.text != ""
 }
 
-func (f FrameTitle) Position(homePos geom.Point, width uint) geom.Point {
-	if f.alignment == AlignTextLeft {
-		return geom.Point{
-			X: homePos.X,
-			Y: homePos.Y,
-		}
+func (f FrameTitle) Position(homePos geom.Point, width, height uint) geom.Point {
+	var yPos int
+
+	if f.verticallyCentered {
+		yPos = homePos.Y + int(height/2)
+	} else {
+		yPos = homePos.Y
 	}
 
-	if f.alignment == AlignTextRight {
-		return geom.Point{
-			X: homePos.X + int(width) - utf8.RuneCountInString(f.text),
-			Y: homePos.Y,
-		}
-	}
+	switch f.alignment {
+	case AlignTextLeft:
+		return geom.Point{X: homePos.X + int(f.padding.X), Y: yPos}
 
-	return geom.Point{
-		X: homePos.X + int(width/2) - utf8.RuneCountInString(f.text)/2,
-		Y: homePos.Y,
+	case AlignTextRight:
+		return geom.Point{X: homePos.X + int(width) - utf8.RuneCountInString(f.text) - int(f.padding.X), Y: yPos}
+
+	default: // Centered Text
+		return geom.Point{X: homePos.X + int(width/2) - utf8.RuneCountInString(f.text)/2, Y: yPos}
 	}
 }
 
@@ -181,7 +194,9 @@ type IConsole interface {
 	Print(pos geom.Point, str string)
 	//PrintRect(x, y, w, h int, fmts string, v ...interface{}) int
 	ClearRect(pos geom.Point, w, h uint)
-	PrintFrame(pos geom.Point, w, h uint, boxStyle FrameStyle, filled, clear bool)
+
+	// TODO: Rename PrintFrame to DrawFrame ??
+	PrintFrame(pos geom.Point, w, h uint, boxStyle FrameStyle, title FrameTitle, filled, clear bool)
 	//PrintRectEx(x, y, w, h int, flag BkgndFlag, alignment Alignment, fmts string, v ...interface{}) int
 	//HeightRect(x, y, w, h int, fmts string, v ...interface{}) int
 	//SetBackgroundFlag(flag BkgndFlag)
@@ -191,7 +206,6 @@ type IConsole interface {
 	//Rect(x, y, w, h int, clear bool, flag BkgndFlag)
 	//Hline(x, y, l int, flag BkgndFlag)
 	//Vline(x, y, l int, flag BkgndFlag)
-	//PrintFrame(x, y, w, h int, empty bool, flag BkgndFlag, fmts string, v ...interface{})
 	GetChar(pos geom.Point) uint
 	GetWidth() uint
 	GetHeight() uint
@@ -381,7 +395,7 @@ func (c *Console) ClearRect(pos geom.Point, w, h uint) {
 	}
 }
 
-func (c *Console) PrintFrame(pos geom.Point, w, h uint, style FrameStyle, filled, clear bool) {
+func (c *Console) PrintFrame(pos geom.Point, w, h uint, style FrameStyle, title FrameTitle, filled, clear bool) {
 	if clear {
 		c.ClearRect(pos, w, h)
 	}
@@ -395,23 +409,30 @@ func (c *Console) PrintFrame(pos geom.Point, w, h uint, style FrameStyle, filled
 		}
 	}
 
-	// Top/Bottom
-	for x := uint(pos.X + 1); x < uint(pos.X)+w; x++ {
-		c.PutCharEx(style.H, geom.Point{X: int(x), Y: pos.Y}, rl.White, rl.Black)
-		c.PutCharEx(style.H, geom.Point{X: int(x), Y: pos.Y + int(h-1)}, rl.White, rl.Black)
+	if style.IsZeroWallBorder() == false {
+		// Top/Bottom
+		for x := uint(pos.X + 1); x < uint(pos.X)+w; x++ {
+			c.PutCharEx(style.H, geom.Point{X: int(x), Y: pos.Y}, rl.White, rl.Black)
+			c.PutCharEx(style.H, geom.Point{X: int(x), Y: pos.Y + int(h-1)}, rl.White, rl.Black)
+		}
+
+		// Left/Right
+		for y := uint(0); y < h-1; y++ {
+			c.PutCharEx(style.V, geom.Point{X: pos.X, Y: pos.Y + int(y)}, rl.White, rl.Black)
+			c.PutCharEx(style.V, geom.Point{X: pos.X + int(w-1), Y: pos.Y + int(y)}, rl.White, rl.Black)
+		}
+
+		// Corners
+		c.PutCharEx(style.NE, geom.Point{X: pos.X + int(w-1), Y: pos.Y}, rl.White, rl.Black)
+		c.PutCharEx(style.SE, geom.Point{X: pos.X + int(w-1), Y: pos.Y + int(h-1)}, rl.White, rl.Black)
+		c.PutCharEx(style.SW, geom.Point{X: pos.X, Y: pos.Y + int(h-1)}, rl.White, rl.Black)
+		c.PutCharEx(style.NW, geom.Point{X: pos.X, Y: pos.Y}, rl.White, rl.Black)
 	}
 
-	// Left/Right
-	for y := uint(0); y < h-1; y++ {
-		c.PutCharEx(style.V, geom.Point{X: pos.X, Y: pos.Y + int(y)}, rl.White, rl.Black)
-		c.PutCharEx(style.V, geom.Point{X: pos.X + int(w-1), Y: pos.Y + int(y)}, rl.White, rl.Black)
+	// Frame Title
+	if title.IsVisible() {
+		c.Print(title.Position(pos, w, h), title.text)
 	}
-
-	// Corners
-	c.PutCharEx(style.NE, geom.Point{X: pos.X + int(w-1), Y: pos.Y}, rl.White, rl.Black)
-	c.PutCharEx(style.SE, geom.Point{X: pos.X + int(w-1), Y: pos.Y + int(h-1)}, rl.White, rl.Black)
-	c.PutCharEx(style.SW, geom.Point{X: pos.X, Y: pos.Y + int(h-1)}, rl.White, rl.Black)
-	c.PutCharEx(style.NW, geom.Point{X: pos.X, Y: pos.Y}, rl.White, rl.Black)
 }
 
 func (c Console) GetChar(pos geom.Point) uint {

@@ -1,6 +1,7 @@
 package gui
 
 import (
+	rl "github.com/gen2brain/raylib-go/raylib"
 	"github.com/go-rogue/engine/geom"
 	"github.com/go-rogue/engine/sprites"
 )
@@ -40,12 +41,15 @@ type RadioButton struct {
 func (g *Gui) NewRadioButton(pos geom.Point, width, height uint, label string, tip string, borderStyle FrameStyle, callback RadioButtonCallback, userData interface{}) *RadioButton {
 	btn := &RadioButton{}
 	btn.Widget.init(pos, width, height, borderStyle)
-	btn.label = label
+	btn.label = FrameTitle{
+		text:               label,
+		alignment:          AlignTextLeft,
+		verticallyCentered: true,
+		padding:            rl.NewVector2(4, 0),
+	}
 	btn.tip = tip
 	btn.callback = callback
 	btn.userData = userData
-	btn.align = BtnTextLeft
-	btn.labelXPadding = 4
 	g.Register(btn)
 	return btn
 }
@@ -78,7 +82,7 @@ func (b *RadioButton) Render(iB IWidget) {
 
 	b.Button.Render(iB)
 
-	var labelPos = b.GetLabelPos("> " + b.label)
+	var labelPos = b.label.Position(b.pos, b.w, b.h)
 	// Radio Buttons have an X padding of 4 cells, this gives one cell padding each side of the selected
 	// marker. Here we pull the x pos back two cells so we have a space between the selected marker and
 	// the label.

@@ -1,48 +1,37 @@
 package gui
 
 import (
+	rl "github.com/gen2brain/raylib-go/raylib"
 	"github.com/go-rogue/engine/geom"
-	"unicode/utf8"
 )
-
-type btnTextAlign uint
 
 type ButtonCallback func(w *Button, userData interface{})
 
-const (
-	BtnTextLeft btnTextAlign = iota
-	BtnTextCenter
-	BtnTextRight
-)
-
 type Button struct {
 	Widget
-	pressed       bool
-	label         string
-	labelXPadding int
-	callback      ButtonCallback
-	align         btnTextAlign
+	pressed  bool
+	label    FrameTitle
+	callback ButtonCallback
 }
 
 func (g *Gui) NewButton(pos geom.Point, width, height uint, label string, tip string, borderStyle FrameStyle, callback ButtonCallback, userData interface{}) *Button {
 	btn := &Button{}
 	btn.Widget.init(pos, width, height, borderStyle)
-	btn.label = label
+	btn.label = FrameTitle{
+		text:               label,
+		alignment:          AlignTextCenter,
+		verticallyCentered: true,
+		padding:            rl.NewVector2(2, 0),
+	}
 	btn.callback = callback
-	btn.align = BtnTextCenter
 	btn.tip = tip
 	btn.userData = userData
-	btn.labelXPadding = 2
 	g.Register(btn)
 	return btn
 }
 
 func (g *Gui) NewBasicButton(pos geom.Point, width, height uint, label string, borderStyle FrameStyle) *Button {
 	return g.NewButton(pos, width, height, label, "", borderStyle, func(w *Button, userData interface{}) {}, nil)
-}
-
-func (b *Button) SetTextAlign(a btnTextAlign) {
-	b.align = a
 }
 
 func (b *Button) Render(iB IWidget) {
@@ -54,31 +43,17 @@ func (b *Button) Render(iB IWidget) {
 	if b.w > 0 && b.h > 0 {
 		con.PrintFrame(b.pos, b.w, b.h, b.borderStyle, ZeroFrameTitle, true, true)
 	}
-	if b.label != "" {
-		con.Print(b.GetLabelPos(b.label), b.label)
+	if b.label.IsVisible() {
+		con.Print(b.label.Position(b.pos, b.w, b.h), b.label.text)
 	}
-}
-
-func (b Button) GetLabelPos(label string) geom.Point {
-	var txtPos geom.Point
-
-	if b.align == BtnTextLeft {
-		txtPos = geom.Point{X: b.pos.X + b.labelXPadding, Y: b.pos.Y + int(b.h/2)}
-	} else if b.align == BtnTextCenter {
-		txtPos = geom.Point{X: b.pos.X + int(int(b.w/2)-utf8.RuneCountInString(label)/2), Y: b.pos.Y + int(b.h/2)}
-	} else if b.align == BtnTextRight {
-		txtPos = geom.Point{X: b.pos.X + int(int(b.w)-utf8.RuneCountInString(label)-b.labelXPadding), Y: b.pos.Y + int(b.h/2)}
-	}
-
-	return txtPos
 }
 
 func (b *Button) SetLabel(newLabel string) {
-	b.label = newLabel
+	b.label.text = newLabel
 }
 
 func (b Button) GetLabel() string {
-	return b.label
+	return b.label.text
 }
 
 func (b *Button) IsPressed() bool {
