@@ -66,7 +66,7 @@ The GUI system will be based upon that available in [afolmert/libtcod-go](https:
     * [x] Vertical Container Widget
     * [x] Horizontal Container Widget
   * [ ] Toolbar Widget
-    * [ ] Toolbar Separator Widget
+    * [x] Toolbar Separator Widget
   * [ ] Label Widget
   * [ ] TextBox Widget
   * [ ] Slider Widget
