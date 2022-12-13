@@ -66,7 +66,7 @@ The GUI system will be based upon that available in [afolmert/libtcod-go](https:
     * [x] Vertical Container Widget
     * [x] Horizontal Container Widget
   * [ ] Toolbar Widget
-  * [ ] Toolbar Separator Widget
+    * [ ] Toolbar Separator Widget
   * [ ] Label Widget
   * [ ] TextBox Widget
   * [ ] Slider Widget
@@ -74,9 +74,32 @@ The GUI system will be based upon that available in [afolmert/libtcod-go](https:
   * [ ] Keyboard Events
   * [ ] Mouse Events
 * [ ] Colour Themes
-* [ ] Working Example for all above
+* [ ] Working Examples for all above
 
-## Research
-- https://tomassedovic.github.io/roguelike-tutorial/index.html
-- https://github.com/afolmert/libtcod-go
+## Credits
+
+### Libraries
+The following libraries are used by GoRogue, with gratitude 💕
+- [gen2brain/raylib-go](https://github.com/gen2brain/raylib-go)
+
+### Developers
+
+### Special Thanks
+A huge thank-you to Jice, Mingos and others for the [libtcod](https://github.com/libtcod/libtcod) library, Adam Folmert and others for [libtcod-go](https://github.com/afolmert/libtcod-go); without either project this one would not exist. Another huge thank-you to /r/roguelikes and their discord community for both inspiration and help. #roguelikedev
+
+### Research
+The following list of links contains all the webpages I found useful in my quest to build this library.
+- [Complete roguelike tutorial using C++ and libtcod](http://www.roguebasin.com/index.php/Complete_roguelike_tutorial_using_C%2B%2B_and_libtcod_-_part_1:_setting_up)
+- [Roguelike Tutorial in Rust + tcod](https://tomassedovic.github.io/roguelike-tutorial/index.html)
+- [libtcod-go: Go bindings for the libtcod library](https://github.com/afolmert/libtcod-go)
 - [Pataro: A Roguelike library built on top of libtcod](https://github.com/SuperFola/pataro)
+- [Rotten Soup: A roguelike built with Vue, Vuetify, Tiled, rot.js, and PixiJS](https://github.com/Larkenx/Rotten-Soup)
+- [The Wavefunction Collapse Algorithm explained very clearly](https://robertheaton.com/2018/12/17/wavefunction-collapse-algorithm/)
+- [Roguelike Tutorial - In Rust](https://bfnightly.bracketproductions.com/chapter_0.html)
+- [Pataro: A Rogue like library on top of libtcod](https://github.com/SuperFola/pataro)
+- [How to Use Tile Bitmasking to Auto-Tile Your Level Layouts](https://gamedevelopment.tutsplus.com/tutorials/how-to-use-tile-bitmasking-to-auto-tile-your-level-layouts--cms-25673)
+
+## License
+GoRogue is free software, licensed under the [MIT LICENSE](LICENSE). We encourage forking and changing the code, hacking around with it, and experimenting.
+
+Copyright (C) 2019-2022 the GoRogue Authors.
