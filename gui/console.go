@@ -175,6 +175,7 @@ func newPrintVM(initial printCommand) *printVM {
 }
 
 type IConsole interface {
+	InBounds(pos geom.Point) bool
 	GetData() CellMap
 	GetDirty() DirtyMap
 	ClearDirty()
@@ -204,7 +205,7 @@ type IConsole interface {
 	//SetAlignment(alignment Alignment)
 	//GetAlignment() Alignment
 	//Rect(x, y, w, h int, clear bool, flag BkgndFlag)
-	//Hline(x, y, l int, flag BkgndFlag)
+	Hline(pos geom.Point, l uint)
 	//Vline(x, y, l int, flag BkgndFlag)
 	GetChar(pos geom.Point) uint
 	GetWidth() uint
@@ -230,6 +231,10 @@ func (c *Console) init() {
 			c.PutChar(' ', geom.Point{X: cX, Y: cY})
 		}
 	}
+}
+
+func (c *Console) InBounds(pos geom.Point) bool {
+	return pos.X >= 0 && pos.X <= int(c.width) && pos.Y >= 0 && pos.Y <= int(c.height)
 }
 
 func (c Console) GetDirty() DirtyMap {
@@ -284,6 +289,13 @@ func (c *Console) Clear() {
 		for cX := 0; cX < int(c.width); cX++ {
 			c.PutChar(' ', geom.Point{X: cX, Y: cY})
 		}
+	}
+}
+
+// Hline draws a horizontal line using the default colors.
+func (c *Console) Hline(pos geom.Point, l uint) {
+	for x := pos.X; x < pos.X+int(l); x++ {
+		c.SetChar(sprites.TCOD_CHAR_HLINE, geom.Point{X: x, Y: pos.Y})
 	}
 }
 
